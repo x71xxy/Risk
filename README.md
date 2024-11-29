@@ -21,6 +21,19 @@
    - 登出功能
 3. 数据库模型
    - User 模型创建及配置
+4. 密码策略实现
+   - 密码强度要求
+     - 最少8个字符
+     - 必须包含大小写字母
+     - 必须包含数字
+     - 必须包含特殊字符
+   - 密码恢复功能
+     - 通过邮箱验证重置密码
+     - 重置密码令牌生成和验证
+5. 开始实现评估请求功能
+   - 创建评估请求数据模型
+   - 设计评估请求表单
+   - 实现图片上传功能
 
 ### 项目结构 
 lovejoy_antiques/
@@ -28,16 +41,25 @@ lovejoy_antiques/
 │ ├── init.py # 应用程序初始化
 │ ├── models/ # 数据库模型
 │ │ ├── init.py
-│ │ └── user.py # 用户模型
+│ │ ├── user.py # 用户模型
+│ │ └── evaluation.py # 新增：评估请求模型
 │ ├── routes/ # 路由处理
 │ │ ├── init.py
 │ │ ├── auth.py # 认证相关路由
 │ │ └── evaluation.py # 评估相关路由
+│ ├── utils/
+│ │ ├── init.py
+│ │ ├── password_validation.py  # 新增：密码验证工具
+│ │ └── email.py               # 新增：邮件发送工具
 │ └── templates/ # HTML 模板
 │ ├── base.html # 基础模板
 │ ├── home.html # 首页
 │ ├── login.html # 登录页
-│ └── register.html # 注册页
+│ ├── register.html # 注册页
+│ ├── reset_password.html    # 新增：重置密码页面
+│ ├── reset_request.html     # 新增：请求重置密码页面
+│ ├── request_evaluation.html # 新增：评估请求页面
+│ └── my_evaluations.html # 新增：评估列表页面
 ├── config.py # 配置文件
 └── run.py # 应用程序入口
 

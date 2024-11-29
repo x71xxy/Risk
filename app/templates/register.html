@@ -1,24 +1,382 @@
 {% extends "base.html" %} {% block title %}注册{% endblock %} {% block content
 %}
-<h1>用户注册</h1>
-<form method="POST">
-  <div>
-    <label for="username">用户名：</label>
-    <input type="text" id="username" name="username" required />
+<div class="auth-container">
+  <div class="auth-box">
+    <div class="auth-header">
+      <h1>创建账号</h1>
+      <p class="subtitle">加入Lovejoy古董评估平台</p>
+    </div>
+
+    <form method="POST" class="auth-form">
+      <div class="form-group">
+        <label for="username">用户名</label>
+        <div class="input-wrapper">
+          <i class="icon">👤</i>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            required
+            placeholder="请输入用户名"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">邮箱</label>
+        <div class="input-wrapper">
+          <i class="icon">📧</i>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="请输入邮箱地址"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">密码</label>
+        <div class="input-wrapper">
+          <i class="icon">🔒</i>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            placeholder="请输入密码"
+          />
+        </div>
+        <div class="password-requirements">
+          <h4>密码要求：</h4>
+          <ul>
+            <li id="length-check"><i class="check-icon"></i>最少8个字符</li>
+            <li id="upper-check"><i class="check-icon"></i>必须包含大写字母</li>
+            <li id="lower-check"><i class="check-icon"></i>必须包含小写字母</li>
+            <li id="number-check"><i class="check-icon"></i>必须包含数字</li>
+            <li id="special-check">
+              <i class="check-icon"></i>必须包含特殊字符(!@#$%^&*等)
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirm_password">确认密码</label>
+        <div class="input-wrapper">
+          <i class="icon">🔒</i>
+          <input
+            type="password"
+            id="confirm_password"
+            name="confirm_password"
+            required
+            placeholder="请再次输入密码"
+          />
+        </div>
+        <div
+          id="password-match-message"
+          class="error-message"
+          style="display: none"
+        >
+          两次输入的密码不一致
+        </div>
+      </div>
+
+      <button type="submit" id="submit-btn" class="btn btn-primary">
+        注册
+      </button>
+
+      <div class="auth-links">
+        <a href="{{ url_for('main.login') }}" class="link">
+          已有账号？立即登录
+        </a>
+      </div>
+    </form>
   </div>
-  <div>
-    <label for="password">密码：</label>
-    <input type="password" id="password" name="password" required />
-  </div>
-  <div>
-    <label for="confirm_password">确认密码：</label>
-    <input
-      type="password"
-      id="confirm_password"
-      name="confirm_password"
-      required
-    />
-  </div>
-  <button type="submit">注册</button>
-</form>
+</div>
+
+<style>
+  .auth-container {
+    min-height: calc(100vh - 4rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f6f8fb 0%, #f1f4f8 100%);
+  }
+
+  .auth-box {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 420px;
+    animation: slideUp 0.5s ease-out;
+  }
+
+  .auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .auth-header h1 {
+    color: #2d3748;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: #718096;
+    font-size: 1rem;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  label {
+    color: #4a5568;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .icon {
+    position: absolute;
+    left: 1rem;
+    color: #a0aec0;
+    font-style: normal;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.8rem 1rem 0.8rem 2.8rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #f8fafc;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: #4299e1;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+  }
+
+  .btn {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary {
+    background-color: #4299e1;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #3182ce;
+    transform: translateY(-1px);
+  }
+
+  .auth-links {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .link {
+    color: #4299e1;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .link:hover {
+    color: #2b6cb0;
+    text-decoration: underline;
+  }
+
+  /* 密码要求相关样式 */
+  .password-requirements {
+    margin-top: 0.5rem;
+    padding: 1rem;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+
+  .password-requirements h4 {
+    color: #4a5568;
+    margin-bottom: 0.8rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .password-requirements ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .password-requirements li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #dc3545;
+    margin: 0.5rem 0;
+    transition: color 0.3s ease;
+  }
+
+  .password-requirements li.valid {
+    color: #28a745;
+  }
+
+  .check-icon {
+    width: 1.2rem;
+    height: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-style: normal;
+  }
+
+  .password-requirements li.valid .check-icon::before {
+    content: "✓";
+    color: #28a745;
+  }
+
+  .password-requirements li:not(.valid) .check-icon::before {
+    content: "×";
+    color: #dc3545;
+  }
+
+  .error-message {
+    color: #dc3545;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background-color: #fff5f5;
+    border-radius: 4px;
+    border: 1px solid #fed7d7;
+  }
+
+  button:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+  }
+
+  button:disabled:hover {
+    transform: none;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .auth-container {
+      padding: 1rem;
+    }
+
+    .auth-box {
+      padding: 1.5rem;
+    }
+
+    .auth-header h1 {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const passwordInput = document.getElementById("password");
+    const confirmInput = document.getElementById("confirm_password");
+    const submitBtn = document.getElementById("submit-btn");
+    const matchMessage = document.getElementById("password-match-message");
+
+    function checkPassword(password) {
+      const checks = {
+        length: password.length >= 8,
+        upper: /[A-Z]/.test(password),
+        lower: /[a-z]/.test(password),
+        number: /\d/.test(password),
+        special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+      };
+
+      document
+        .getElementById("length-check")
+        .classList.toggle("valid", checks.length);
+      document
+        .getElementById("upper-check")
+        .classList.toggle("valid", checks.upper);
+      document
+        .getElementById("lower-check")
+        .classList.toggle("valid", checks.lower);
+      document
+        .getElementById("number-check")
+        .classList.toggle("valid", checks.number);
+      document
+        .getElementById("special-check")
+        .classList.toggle("valid", checks.special);
+
+      return Object.values(checks).every(Boolean);
+    }
+
+    function checkPasswordMatch() {
+      const match = passwordInput.value === confirmInput.value;
+      matchMessage.style.display = match ? "none" : "block";
+      return match;
+    }
+
+    function validateForm() {
+      const isPasswordValid = checkPassword(passwordInput.value);
+      const isMatching = checkPasswordMatch();
+      submitBtn.disabled = !(isPasswordValid && isMatching);
+    }
+
+    passwordInput.addEventListener("input", function () {
+      checkPassword(this.value);
+      validateForm();
+    });
+
+    confirmInput.addEventListener("input", function () {
+      validateForm();
+    });
+
+    // 初始状态设置按钮为禁用
+    submitBtn.disabled = true;
+  });
+</script>
 {% endblock %}

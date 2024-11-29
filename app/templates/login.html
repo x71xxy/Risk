@@ -1,15 +1,207 @@
 {% extends "base.html" %} {% block title %}登录{% endblock %} {% block content
 %}
-<h1>用户登录</h1>
-<form method="POST">
-  <div>
-    <label for="username">用户名：</label>
-    <input type="text" id="username" name="username" required />
+<div class="auth-container">
+  <div class="auth-box">
+    <div class="auth-header">
+      <h1>欢迎回来</h1>
+      <p class="subtitle">登录您的Lovejoy账号</p>
+    </div>
+
+    <form method="POST" class="auth-form">
+      <div class="form-group">
+        <label for="username">用户名</label>
+        <div class="input-wrapper">
+          <i class="icon">👤</i>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            required
+            placeholder="请输入用户名"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">密码</label>
+        <div class="input-wrapper">
+          <i class="icon">🔒</i>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            placeholder="请输入密码"
+          />
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">登录</button>
+
+      <div class="auth-links">
+        <a href="{{ url_for('main.register') }}" class="link">
+          还没有账号？立即注册
+        </a>
+        <a href="{{ url_for('main.reset_password_request') }}" class="link"
+          >忘记密码？</a
+        >
+      </div>
+    </form>
   </div>
-  <div>
-    <label for="password">密码：</label>
-    <input type="password" id="password" name="password" required />
-  </div>
-  <button type="submit">登录</button>
-</form>
+</div>
+
+<style>
+  .auth-container {
+    min-height: calc(100vh - 4rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f6f8fb 0%, #f1f4f8 100%);
+  }
+
+  .auth-box {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 420px;
+    animation: slideUp 0.5s ease-out;
+  }
+
+  .auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .auth-header h1 {
+    color: #2d3748;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: #718096;
+    font-size: 1rem;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  label {
+    color: #4a5568;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .icon {
+    position: absolute;
+    left: 1rem;
+    color: #a0aec0;
+    font-style: normal;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.8rem 1rem 0.8rem 2.8rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #f8fafc;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: #4299e1;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+  }
+
+  .btn {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary {
+    background-color: #4299e1;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #3182ce;
+    transform: translateY(-1px);
+  }
+
+  .auth-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .link {
+    color: #4299e1;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .link:hover {
+    color: #2b6cb0;
+    text-decoration: underline;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .auth-container {
+      padding: 1rem;
+    }
+
+    .auth-box {
+      padding: 1.5rem;
+    }
+
+    .auth-header h1 {
+      font-size: 1.5rem;
+    }
+
+    .auth-links {
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+    }
+  }
+</style>
 {% endblock %}

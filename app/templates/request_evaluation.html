@@ -1,0 +1,306 @@
+{% extends "base.html" %} {% block title %}请求评估{% endblock %} {% block
+content %}
+<div class="evaluation-container">
+  <div class="evaluation-box">
+    <div class="evaluation-header">
+      <h1>请求古董评估</h1>
+      <p class="subtitle">请填写以下信息，我们的专家会尽快为您评估</p>
+    </div>
+
+    <form method="POST" class="evaluation-form" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="title">物品名称</label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          required
+          placeholder="请输入物品名称"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="category">物品类别</label>
+        <select id="category" name="category" required>
+          <option value="">请选择类别</option>
+          <option value="furniture">家具</option>
+          <option value="pottery">陶瓷</option>
+          <option value="painting">字画</option>
+          <option value="jewelry">珠宝</option>
+          <option value="other">其他</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="description">物品描述</label>
+        <textarea
+          id="description"
+          name="description"
+          required
+          placeholder="请详细描述物品的特征、历史背景等信息"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="condition">物品状况</label>
+        <select id="condition" name="condition" required>
+          <option value="">请选择状况</option>
+          <option value="perfect">完美</option>
+          <option value="excellent">优秀</option>
+          <option value="good">良好</option>
+          <option value="fair">一般</option>
+          <option value="poor">较差</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="age_estimation">预估年代</label>
+        <input
+          type="text"
+          id="age_estimation"
+          name="age_estimation"
+          placeholder="如：清朝、民国等"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="dimensions">尺寸</label>
+        <input
+          type="text"
+          id="dimensions"
+          name="dimensions"
+          placeholder="长x宽x高（厘米）"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="images">上传图片</label>
+        <div class="image-upload-container">
+          <input
+            type="file"
+            id="images"
+            name="images"
+            multiple
+            accept="image/*"
+            class="image-input"
+          />
+          <div class="upload-placeholder">
+            <i class="upload-icon">📸</i>
+            <span>点击或拖拽上传图片</span>
+            <small>支持jpg、png格式，最多5张</small>
+          </div>
+          <div id="image-preview" class="image-preview"></div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">提交评估请求</button>
+    </form>
+  </div>
+</div>
+
+<style>
+  .evaluation-container {
+    min-height: calc(100vh - 4rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f6f8fb 0%, #f1f4f8 100%);
+  }
+
+  .evaluation-box {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .evaluation-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .evaluation-header h1 {
+    color: #2d3748;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: #718096;
+    font-size: 1rem;
+  }
+
+  .evaluation-form {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  label {
+    color: #4a5568;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #f8fafc;
+  }
+
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: #4299e1;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+  }
+
+  .image-upload-container {
+    position: relative;
+    border: 2px dashed #e2e8f0;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .image-upload-container:hover {
+    border-color: #4299e1;
+  }
+
+  .image-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: #718096;
+  }
+
+  .upload-icon {
+    font-size: 2rem;
+  }
+
+  .image-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .preview-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .remove-image {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+
+  @media (max-width: 640px) {
+    .evaluation-box {
+      padding: 1.5rem;
+    }
+
+    .evaluation-header h1 {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const imageInput = document.getElementById("images");
+    const imagePreview = document.getElementById("image-preview");
+    const maxImages = 5;
+
+    imageInput.addEventListener("change", function (e) {
+      const files = Array.from(e.target.files);
+
+      if (files.length > maxImages) {
+        alert(`最多只能上传${maxImages}张图片`);
+        return;
+      }
+
+      imagePreview.innerHTML = "";
+
+      files.forEach((file) => {
+        if (!file.type.startsWith("image/")) {
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const div = document.createElement("div");
+          div.className = "preview-item";
+          div.innerHTML = `
+            <img src="${e.target.result}" alt="预览图片">
+            <button type="button" class="remove-image">&times;</button>
+          `;
+
+          div
+            .querySelector(".remove-image")
+            .addEventListener("click", function () {
+              div.remove();
+            });
+
+          imagePreview.appendChild(div);
+        };
+
+        reader.readAsDataURL(file);
+      });
+    });
+  });
+</script>
+{% endblock %}

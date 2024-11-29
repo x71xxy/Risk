@@ -1,0 +1,56 @@
+{% extends "base.html" %} {% block title %}重置密码{% endblock %} {% block
+content %}
+<div class="auth-container">
+  <div class="auth-box">
+    <div class="auth-header">
+      <h1>重置密码</h1>
+      <p class="subtitle">请输入您的账号邮箱，我们将向您发送重置链接</p>
+    </div>
+
+    <form method="POST" class="auth-form">
+      <div class="form-group">
+        <label for="email">邮箱地址</label>
+        <div class="input-wrapper">
+          <i class="icon">📧</i>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="请输入您的邮箱地址"
+          />
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">发送重置链接</button>
+
+      <div class="auth-links">
+        <a href="{{ url_for('main.login') }}" class="link"> 返回登录 </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  .auth-container {
+    min-height: calc(100vh - 4rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f6f8fb 0%, #f1f4f8 100%);
+  }
+
+  .auth-box {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 420px;
+    animation: slideUp 0.5s ease-out;
+  }
+
+  /* 复用auth-container的基础样式 */
+</style>
+{% endblock %}

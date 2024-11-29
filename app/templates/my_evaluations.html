@@ -1,0 +1,93 @@
+{% extends "base.html" %} {% block title %}我的评估{% endblock %} {% block
+content %}
+<div class="evaluations-container">
+  <div class="evaluations-box">
+    <h1>我的评估记录</h1>
+
+    {% if evaluations %}
+    <div class="evaluations-list">
+      {% for evaluation in evaluations %}
+      <div class="evaluation-card">
+        <h3>{{ evaluation.title }}</h3>
+        <div class="evaluation-info">
+          <p><strong>状态：</strong> {{ evaluation.status }}</p>
+          <p>
+            <strong>提交时间：</strong> {{
+            evaluation.created_at.strftime('%Y-%m-%d %H:%M') }}
+          </p>
+          {% if evaluation.estimated_value %}
+          <p><strong>估价：</strong> ¥{{ evaluation.estimated_value }}</p>
+          {% endif %}
+        </div>
+        <div class="evaluation-actions">
+          <a href="#" class="btn btn-outline">查看详情</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-evaluations">
+      <p>您还没有提交过评估请求</p>
+      <a href="{{ url_for('main.request_evaluation') }}" class="btn btn-primary"
+        >开始第一次评估</a
+      >
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .evaluations-container {
+    min-height: calc(100vh - 4rem);
+    padding: 2rem;
+    background: linear-gradient(135deg, #f6f8fb 0%, #f1f4f8 100%);
+  }
+
+  .evaluations-box {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+
+  h1 {
+    text-align: center;
+    color: #2d3748;
+    margin-bottom: 2rem;
+  }
+
+  .evaluation-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .evaluation-card h3 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+  }
+
+  .evaluation-info {
+    margin-bottom: 1rem;
+  }
+
+  .evaluation-info p {
+    margin: 0.5rem 0;
+    color: #4a5568;
+  }
+
+  .no-evaluations {
+    text-align: center;
+    padding: 2rem;
+    color: #718096;
+  }
+
+  .no-evaluations .btn {
+    margin-top: 1rem;
+  }
+</style>
+{% endblock %}
