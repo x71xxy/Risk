@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lovejoy古董评估 - {% block title %}{% endblock %}</title>
+  </head>
+  <body>
+    <nav>
+      <a href="{{ url_for('main.home') }}">首页</a>
+      {% if current_user.is_authenticated %}
+      <span>欢迎, {{ current_user.username }}</span>
+      <a href="{{ url_for('main.logout') }}">退出</a>
+      {% else %}
+      <a href="{{ url_for('main.login') }}">登录</a>
+      <a href="{{ url_for('main.register') }}">注册</a>
+      {% endif %}
+    </nav>
+
+    {% with messages = get_flashed_messages() %} {% if messages %} {% for
+    message in messages %}
+    <div class="flash-message">{{ message }}</div>
+    {% endfor %} {% endif %} {% endwith %} {% block content %} {% endblock %}
+  </body>
+</html>
