@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SelectField, MultipleFileField
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired, Length, ValidationError
+from flask import current_app
 
 class EvaluationRequestForm(FlaskForm):
     title = StringField('物品名称', validators=[
@@ -27,4 +28,12 @@ class EvaluationRequestForm(FlaskForm):
         ('both', '都可以')
     ], validators=[DataRequired()])
     
-    images = MultipleFileField('上传图片') 
+    images = MultipleFileField('上传图片')
+    
+    def validate_images(self, field):
+        if not field.data:
+            return
+        
+        # 检查文件数量
+        if len(field.data) > current_app.config['MAX_IMAGE_COUNT']:
+            raise ValidationError(f'最多只能上传{current_app.config["MAX_IMAGE_COUNT"]}张图片') 

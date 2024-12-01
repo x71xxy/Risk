@@ -35,16 +35,51 @@ content %}
 
       <div class="form-group">
         {{ form.images.label }} {{ form.images(class="form-control",
-        multiple=true, accept="image/*") }}
+        multiple=true, accept="image/*", onchange="validateImages(this)") }}
         <small class="text-muted">
           最多上传5张图片，每张不超过5MB。支持的格式：JPG, PNG, GIF
         </small>
+        <div class="error-message" id="image-error"></div>
       </div>
 
       <button type="submit" class="btn btn-primary">提交评估请求</button>
     </form>
   </div>
 </div>
+
+<script>
+  function validateImages(input) {
+    const maxImages = {{ config['MAX_IMAGE_COUNT'] }};
+    const maxSize = {{ config['MAX_CONTENT_LENGTH'] }};
+    const errorDiv = document.getElementById('image-error');
+
+    if (input.files.length > maxImages) {
+      errorDiv.textContent = `最多只能上传${maxImages}张图片`;
+      input.value = ''; // 清空选择
+      return false;
+    }
+
+    // 检查每个文件的大小
+    for (let file of input.files) {
+      if (file.size > maxSize) {
+        errorDiv.textContent = '每个文件不能超过5MB';
+        input.value = '';
+        return false;
+      }
+    }
+
+    errorDiv.textContent = ''; // 清空错误信息
+    return true;
+  }
+
+  // 表单提交前再次验证
+  document.querySelector('.evaluation-form').addEventListener('submit', function(e) {
+    const input = document.querySelector('input[type="file"]');
+    if (!validateImages(input)) {
+      e.preventDefault();
+    }
+  });
+</script>
 
 <style>
   .evaluation-container {
@@ -126,6 +161,12 @@ content %}
   .alert-success {
     background: #c6f6d5;
     color: #2f855a;
+  }
+
+  .error-message {
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
   }
 </style>
 {% endblock %}

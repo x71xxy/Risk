@@ -30,10 +30,14 @@ class Config:
     MAIL_DEFAULT_SENDER = ('Lovejoy古董评估', os.environ.get('MAIL_USERNAME'))
     
     # 文件上传配置
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 限制上传文件大小为16MB
+    MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 限制单个文件大小为5MB
     UPLOAD_FOLDER = 'app/static/uploads'
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     MAX_IMAGE_COUNT = 5  # 每次评估最多上传5张图片
+    
+    # 图片验证配置
+    MAX_IMAGE_DIMENSION = 4096  # 最大图片尺寸
+    ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif']
     
     # 安全配置
     SESSION_COOKIE_SECURE = os.environ.get('FLASK_ENV') == 'production'

@@ -24,11 +24,24 @@ def validate_image(stream):
         image.verify()
         stream.seek(0)  # 重置文件指针
         
-        # 使用imghdr进行双重验证
+        # 检查文件格式
         image_format = imghdr.what(stream)
-        stream.seek(0)  # 再次重置文件指针
-        
-        return image_format in ['jpeg', 'png', 'gif']
+        if image_format not in ['jpeg', 'png', 'gif']:
+            return False
+            
+        # 检查图片尺寸
+        image = Image.open(stream)
+        if image.size[0] > 4096 or image.size[1] > 4096:  # 限制最大尺寸为4096x4096
+            return False
+            
+        # 检查文件大小
+        stream.seek(0, 2)  # 移动到文件末尾
+        size = stream.tell()  # 获取文件大小
+        stream.seek(0)  # 重置文件指针
+        if size > current_app.config['MAX_CONTENT_LENGTH']:
+            return False
+            
+        return True
     except Exception as e:
         current_app.logger.error(f"图片验证失败: {str(e)}")
         return False
@@ -40,25 +53,24 @@ def request_evaluation():
     
     if form.validate_on_submit():
         try:
+            # 检查文件数量
+            if len(request.files.getlist('images')) > current_app.config['MAX_IMAGE_COUNT']:
+                flash('最多只能上传5张图片', 'error')
+                return render_template('request_evaluation.html', form=form)
+                
             # 处理图片上传
             image_paths = []
-            if form.images.data:
-                for file in form.images.data:
-                    if file and allowed_file(file.filename):
-                        filename = secure_filename(file.filename)
-                        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            for image in request.files.getlist('images'):
+                if image and allowed_file(image.filename):
+                    if not validate_image(image):
+                        flash('无效的图片文件', 'error')
+                        return render_template('request_evaluation.html', form=form)
                         
-                        # 创建用户专属文件夹
-                        user_folder = f"user_{current_user.id}"
-                        safe_filename = f"{timestamp}_{filename}"
-                        
-                        user_path = os.path.join(current_app.config['UPLOAD_FOLDER'], user_folder)
-                        if not os.path.exists(user_path):
-                            os.makedirs(user_path)
-                        
-                        file_path = os.path.join(user_path, safe_filename)
-                        file.save(file_path)
-                        image_paths.append(f"{user_folder}/{safe_filename}")
+                    filename = secure_filename(image.filename)
+                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                    unique_filename = f"{timestamp}_{filename}"
+                    image.save(os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename))
+                    image_paths.append(unique_filename)
             
             # 创建评估请求
             evaluation = EvaluationRequest(
