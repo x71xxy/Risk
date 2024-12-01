@@ -30,6 +30,8 @@ class User(UserMixin, db.Model):
     locked_until = db.Column(db.DateTime, nullable=True)
     last_login_attempt = db.Column(db.DateTime, nullable=True)
     
+    is_admin = db.Column(db.Boolean, default=False)
+    
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
         
@@ -86,6 +88,10 @@ class User(UserMixin, db.Model):
             self.login_attempts = 0
             db.session.commit()
         return False
+    
+    @property
+    def is_administrator(self):
+        return self.is_admin
 
 class TempUser(db.Model):
     __tablename__ = 'temp_users'

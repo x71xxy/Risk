@@ -3,8 +3,10 @@ load_dotenv()  # 加载 .env 文件中的环境变量
 
 from app import create_app, db
 import os
+from app import commands  # 添加这行
 
 app = create_app()
+commands.init_app(app)  # 添加这行
 
 if __name__ == '__main__':
     with app.app_context():

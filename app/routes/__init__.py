@@ -2,10 +2,11 @@ from flask import Blueprint
 
 main = Blueprint('main', __name__)
 
-# 导入所有路由
+# 先导入所有路由
+from .views import *
 from .auth import *
 from .evaluation import *
-from .views import *
+from .admin import *  # 确保这个文件存在
 
-# 确保导出 Blueprint
+# 导出 Blueprint
 __all__ = ['main'] 

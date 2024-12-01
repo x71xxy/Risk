@@ -35,10 +35,8 @@ def create_app(config_name=None):
     from app.routes import main as main_blueprint
     app.register_blueprint(main_blueprint)
     
-    # 创建上传目录
-    upload_dir = os.path.join(app.static_folder, 'uploads')
-    if not os.path.exists(upload_dir):
-        os.makedirs(upload_dir)
+    # 确保导入所有路由
+    from app.routes import admin, auth, evaluation, views
     
     return app
 

@@ -153,7 +153,12 @@
           >Lovejoy古董评估</a
         >
         <div class="nav-links">
-          {% if current_user.is_authenticated %}
+          {% if current_user.is_authenticated %} {% if
+          current_user.is_administrator %}
+          <a href="{{ url_for('main.admin_dashboard') }}" class="nav-link"
+            >管理后台</a
+          >
+          {% endif %}
           <a href="{{ url_for('main.request_evaluation') }}" class="nav-link"
             >请求评估</a
           >
