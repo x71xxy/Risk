@@ -9,7 +9,7 @@ from app import db
 @main.route('/admin')
 @admin_required
 def admin_dashboard():
-    """管理员仪表盘"""
+    """Admin dashboard"""
     stats = {
         'total_users': User.query.count(),
         'total_evaluations': EvaluationRequest.query.count(),
@@ -21,7 +21,7 @@ def admin_dashboard():
 @main.route('/admin/users')
 @admin_required
 def admin_users():
-    """用户管理"""
+    """User management"""
     page = request.args.get('page', 1, type=int)
     users = User.query.paginate(page=page, per_page=20)
     return render_template('admin/users.html', users=users)
@@ -29,7 +29,7 @@ def admin_users():
 @main.route('/admin/evaluations')
 @admin_required
 def admin_evaluations():
-    """评估管理"""
+    """Evaluation management"""
     page = request.args.get('page', 1, type=int)
     status = request.args.get('status', '')
     
@@ -41,17 +41,17 @@ def admin_evaluations():
                       .paginate(page=page, per_page=20)
     return render_template('admin/evaluations.html', evaluations=evaluations)
 
-@main.route('/admin/evaluation/<int:id>/update', methods=['POST'])
+@main.route('/admin/evaluation/<int:evaluation_id>/update', methods=['POST'])
 @admin_required
-def update_evaluation_status(id):
-    """更新评估状态"""
-    evaluation = EvaluationRequest.query.get_or_404(id)
-    status = request.json.get('status')
-    
-    if status not in EvaluationRequest.STATUS_CHOICES:
-        return jsonify({'error': '无效的状态'}), 400
-        
-    evaluation.status = status
-    db.session.commit()
-    
-    return jsonify({'message': '状态已更新'}) 
+def update_evaluation_status(evaluation_id):
+    """Update evaluation status"""
+    try:
+        data = request.get_json()
+        evaluation = EvaluationRequest.query.get_or_404(evaluation_id)
+        evaluation.status = data['status']
+        db.session.commit()
+        return jsonify({'message': 'Status updated successfully'})
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Failed to update evaluation status: {str(e)}")
+        return jsonify({'error': 'Failed to update status'}), 500 

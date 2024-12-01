@@ -1,10 +1,10 @@
-{% extends "base.html" %} {% block title %}登录{% endblock %} {% block content
+{% extends "base.html" %} {% block title %}Login{% endblock %} {% block content
 %}
 <div class="auth-container">
   <div class="auth-box">
     <div class="auth-header">
-      <h1>登录</h1>
-      <p class="subtitle">欢迎回到Lovejoy古董评估平台</p>
+      <h1>Login</h1>
+      <p class="subtitle">Welcome back to Lovejoy Antiques</p>
     </div>
 
     <form method="POST" class="auth-form">
@@ -12,16 +12,16 @@
 
       <div class="form-group">
         {{ form.username.label }} {{ form.username(class="form-control",
-        placeholder="请输入用户名") }} {% if form.username.errors %} {% for
-        error in form.username.errors %}
+        placeholder="Enter your username") }} {% if form.username.errors %} {%
+        for error in form.username.errors %}
         <span class="error-message">{{ error }}</span>
         {% endfor %} {% endif %}
       </div>
 
       <div class="form-group">
         {{ form.password.label }} {{ form.password(class="form-control",
-        placeholder="请输入密码") }} {% if form.password.errors %} {% for error
-        in form.password.errors %}
+        placeholder="Enter your password") }} {% if form.password.errors %} {%
+        for error in form.password.errors %}
         <span class="error-message">{{ error }}</span>
         {% endfor %} {% endif %}
       </div>
@@ -35,10 +35,10 @@
 
       <div class="auth-links">
         <a href="{{ url_for('main.register') }}" class="link"
-          >还没有账号？立即注册</a
+          >No account? Register now</a
         >
         <a href="{{ url_for('main.reset_password_request') }}" class="link"
-          >忘记密码？</a
+          >Forgot password?</a
         >
       </div>
     </form>

@@ -1,49 +1,49 @@
-{% extends "base.html" %} {% block title %}首页{% endblock %} {% block content
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
 %}
 <div class="hero-section">
   <div class="hero-content">
-    <h1>欢迎来到Lovejoy古董评估</h1>
-    <p class="subtitle">这里是值得信赖的古董评估平台</p>
+    <h1>Welcome to Lovejoy Antiques</h1>
+    <p class="subtitle">Your Trusted Antique Evaluation Platform</p>
     {% if current_user.is_authenticated %}
-    <p class="welcome-text">欢迎回来，{{ current_user.username }}!</p>
+    <p class="welcome-text">Welcome back, {{ current_user.username }}!</p>
     <div class="action-buttons">
       <a href="{{ url_for('main.request_evaluation') }}" class="btn btn-primary"
-        >开始评估</a
+        >Start Evaluation</a
       >
       <a href="{{ url_for('main.my_evaluations') }}" class="btn btn-outline"
-        >查看历史评估</a
+        >View History</a
       >
     </div>
     {% else %}
     <div class="action-buttons">
       <a href="{{ url_for('main.register') }}" class="btn btn-primary"
-        >立即注册</a
+        >Register Now</a
       >
-      <a href="{{ url_for('main.login') }}" class="btn btn-outline">登录</a>
+      <a href="{{ url_for('main.login') }}" class="btn btn-outline">Login</a>
     </div>
     {% endif %}
   </div>
 </div>
 
 <div class="features-section">
-  <h2 class="section-title">我们的服务</h2>
+  <h2 class="section-title">Our Services</h2>
   <div class="features-grid">
     <div class="feature-card">
       <div class="feature-icon">🏺</div>
-      <h3>专业评估</h3>
-      <p>由资深专家提供准确的古董价值评估</p>
+      <h3>Professional Evaluation</h3>
+      <p>Accurate antique valuations by experienced experts</p>
     </div>
 
     <div class="feature-card">
       <div class="feature-icon">🔒</div>
-      <h3>安全可靠</h3>
-      <p>严格的信息保护机制确保您的隐私安全</p>
+      <h3>Secure and Reliable</h3>
+      <p>Strict information protection mechanisms to ensure your privacy</p>
     </div>
 
     <div class="feature-card">
       <div class="feature-icon">⚡</div>
-      <h3>快速响应</h3>
-      <p>高效的评估流程，快速获得专业意见</p>
+      <h3>Fast Response</h3>
+      <p>Efficient evaluation process, quick access to professional opinions</p>
     </div>
   </div>
 </div>

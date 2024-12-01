@@ -1,36 +1,29 @@
-{% extends "base.html" %} {% block title %}我的评估{% endblock %} {% block
+{% extends "base.html" %} {% block title %}My Evaluations{% endblock %} {% block
 content %}
 <div class="evaluations-container">
   <div class="evaluations-header">
-    <h1>我的评估记录</h1>
+    <h1>My Evaluation Records</h1>
   </div>
 
   {% if evaluations %}
   <div class="evaluations-grid">
     {% for evaluation in evaluations %}
     <div class="evaluation-card">
-      <div class="evaluation-header">
-        <h2>{{ evaluation.title }}</h2>
-        <span class="status-badge {{ evaluation.status }}">
-          {{ evaluation.get_status_display() }}
-        </span>
-      </div>
-
       <div class="evaluation-info">
         <div class="info-row">
           <div class="info-item">
-            <label>类别</label>
+            <label>Category</label>
             <span>{{ evaluation.get_category_display() }}</span>
           </div>
 
           <div class="info-item">
-            <label>提交时间</label>
+            <label>Submission Time</label>
             <span>{{ evaluation.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
           </div>
         </div>
 
         <div class="description">
-          <label>描述</label>
+          <label>Description</label>
           <p>
             {{ evaluation.description[:150] }}{% if
             evaluation.description|length > 150 %}...{% endif %}
@@ -43,14 +36,14 @@ content %}
           href="{{ url_for('main.evaluation_detail', evaluation_id=evaluation.id) }}"
           class="btn btn-outline"
         >
-          查看详情
+          View Details
         </a>
         {% if evaluation.status == 'pending' %}
         <button
           onclick="cancelEvaluation({{ evaluation.id }})"
           class="btn btn-danger"
         >
-          取消评估
+          Cancel Evaluation
         </button>
         {% endif %}
       </div>
@@ -60,10 +53,10 @@ content %}
   {% else %}
   <div class="empty-state">
     <div class="empty-icon">📝</div>
-    <h2>暂无评估记录</h2>
-    <p>开始您的第一次古董评估吧</p>
+    <h2>No Evaluations Yet</h2>
+    <p>Start your first antique evaluation</p>
     <a href="{{ url_for('main.request_evaluation') }}" class="btn btn-primary">
-      开始评估
+      Start Evaluation
     </a>
   </div>
   {% endif %}
@@ -282,7 +275,7 @@ content %}
 
 <script>
   function cancelEvaluation(evaluationId) {
-    if (confirm("确定要取消这个评估请求吗？")) {
+    if (confirm("Are you sure you want to cancel this evaluation request?")) {
       fetch(`/cancel_evaluation/${evaluationId}`, {
         method: "POST",
         headers: {
@@ -313,7 +306,7 @@ content %}
           console.error("Error:", error);
           const notification = document.createElement("div");
           notification.className = "notification error";
-          notification.textContent = "操作失败，请重试";
+          notification.textContent = "Operation failed, please try again";
           document.body.appendChild(notification);
 
           setTimeout(() => {

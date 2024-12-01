@@ -1,18 +1,18 @@
 {% extends "admin/base.html" %} {% import "macros.html" as macros %} {% block
 admin_content %}
 <div class="users-container">
-  <h2>用户管理</h2>
+  <h2>User Management</h2>
 
   <div class="users-table">
     <table>
       <thead>
         <tr>
           <th>ID</th>
-          <th>用户名</th>
-          <th>邮箱</th>
-          <th>注册时间</th>
-          <th>状态</th>
-          <th>操作</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Registration Date</th>
+          <th>Status</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -26,12 +26,12 @@ admin_content %}
             <span
               class="status-badge {% if user.is_verified %}verified{% else %}unverified{% endif %}"
             >
-              {{ '已验证' if user.is_verified else '未验证' }}
+              {{ 'Verified' if user.is_verified else 'Unverified' }}
             </span>
           </td>
           <td>
             <button class="btn btn-danger" onclick="deleteUser({{ user.id }})">
-              删除
+              Delete
             </button>
           </td>
         </tr>

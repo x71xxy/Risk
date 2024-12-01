@@ -1,9 +1,9 @@
-{% extends "base.html" %} {% block title %}评估详情{% endblock %} {% block
-content %}
+{% extends "base.html" %} {% block title %}Evaluation Details{% endblock %} {%
+block content %}
 <div class="evaluation-detail-container">
   <div class="evaluation-detail-box">
     <div class="evaluation-header">
-      <h1>评估详情</h1>
+      <h1>Evaluation Details</h1>
       <div class="status-badge {{ evaluation.status }}">
         {{ evaluation.get_status_display() }}
       </div>
@@ -11,34 +11,34 @@ content %}
 
     <div class="evaluation-info">
       <div class="info-group">
-        <label>物品名称</label>
+        <label>Item Name</label>
         <p>{{ evaluation.title }}</p>
       </div>
 
       <div class="info-group">
-        <label>物品类别</label>
+        <label>Category</label>
         <p>{{ evaluation.get_category_display() }}</p>
       </div>
 
       <div class="info-group">
-        <label>提交时间</label>
+        <label>Submission Time</label>
         <p>{{ evaluation.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
       </div>
 
       <div class="info-group">
-        <label>物品描述</label>
+        <label>Description</label>
         <p class="description">{{ evaluation.description }}</p>
       </div>
 
       {% if evaluation.images %}
       <div class="images-group">
-        <label>上传的图片</label>
+        <label>Uploaded Images</label>
         <div class="image-gallery">
           {% for image_path in evaluation.images %}
           <div class="image-item">
             <img
               src="{{ url_for('static', filename='uploads/' + image_path) }}"
-              alt="评估图片"
+              alt="Evaluation Image"
             />
           </div>
           {% endfor %}
@@ -53,7 +53,7 @@ content %}
         onclick="cancelEvaluation({{ evaluation.id }})"
         class="btn btn-danger"
       >
-        取消评估
+        Cancel Evaluation
       </button>
     </div>
     {% endif %}
@@ -158,7 +158,7 @@ content %}
 
 <script>
   function cancelEvaluation(evaluationId) {
-    if (confirm("确定要取消这个评估请求吗？")) {
+    if (confirm("Are you sure you want to cancel this evaluation request?")) {
       fetch(`/cancel_evaluation/${evaluationId}`, {
         method: "POST",
         headers: {
@@ -179,14 +179,14 @@ content %}
               window.location.href = "/my_evaluations";
             }, 3000);
           } else {
-            throw new Error(data.error || "操作失败");
+            throw new Error(data.error || "Operation failed");
           }
         })
         .catch((error) => {
           console.error("Error:", error);
           const notification = document.createElement("div");
           notification.className = "notification error";
-          notification.textContent = "操作失败，请重试";
+          notification.textContent = "Operation failed, please try again";
           document.body.appendChild(notification);
 
           setTimeout(() => {

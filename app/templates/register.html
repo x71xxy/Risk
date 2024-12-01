@@ -1,12 +1,10 @@
-{% extends "base.html" %} {% block title %}注册{% endblock %} {% block head %}
-{{ super() }}
-<script src="https://www.recaptcha.net/recaptcha/api.js" async defer></script>
-{% endblock %} {% block content %}
+{% extends "base.html" %} {% block title %}Register{% endblock %} {% block
+content %}
 <div class="auth-container">
   <div class="auth-box">
     <div class="auth-header">
-      <h1>创建账号</h1>
-      <p class="subtitle">加入Lovejoy古董评估平台</p>
+      <h1>Create Account</h1>
+      <p class="subtitle">Join Lovejoy Antiques</p>
     </div>
 
     <form method="POST" class="auth-form" id="register-form">
@@ -14,62 +12,73 @@
 
       <div class="form-group">
         {{ form.username.label }} {{ form.username(class="form-control") }} {%
-        if form.username.errors %}
-        <div class="invalid-feedback">
-          {% for error in form.username.errors %}
-          <span>{{ error }}</span>
-          {% endfor %}
-        </div>
-        {% endif %}
+        if form.username.errors %} {% for error in form.username.errors %}
+        <span class="error-message">{{ error }}</span>
+        {% endfor %} {% endif %}
       </div>
 
       <div class="form-group">
         {{ form.email.label }} {{ form.email(class="form-control") }} {% if
-        form.email.errors %}
-        <div class="invalid-feedback">
-          {% for error in form.email.errors %}
-          <span>{{ error }}</span>
-          {% endfor %}
-        </div>
-        {% endif %}
-        <small class="form-text text-muted">必填项，用于账号验证</small>
+        form.email.errors %} {% for error in form.email.errors %}
+        <span class="error-message">{{ error }}</span>
+        {% endfor %} {% endif %}
+        <small class="form-text text-muted"
+          >Required for account verification</small
+        >
       </div>
 
       <div class="form-group">
         {{ form.phone.label }} {{ form.phone(class="form-control") }} {% if
-        form.phone.errors %}
-        <div class="invalid-feedback">
-          {% for error in form.phone.errors %}
-          <span>{{ error }}</span>
-          {% endfor %}
-        </div>
-        {% endif %}
-        <small class="form-text text-muted">选填项，可用于接收通知</small>
+        form.phone.errors %} {% for error in form.phone.errors %}
+        <span class="error-message">{{ error }}</span>
+        {% endfor %} {% endif %}
       </div>
 
       <div class="form-group">
-        {{ form.password.label }} {{ form.password(class="form-control") }} {%
+        {{ form.password.label }} {{ form.password(class="form-control",
+        oninput="checkPassword(this.value)") }} {% if form.password.errors %} {%
         for error in form.password.errors %}
-        <span class="error">{{ error }}</span>
-        {% endfor %}
+        <span class="error-message">{{ error }}</span>
+        {% endfor %} {% endif %}
+        <div class="password-requirements">
+          <ul>
+            <li id="length" class="requirement">
+              <i class="check-icon"></i>At least 8 characters
+            </li>
+            <li id="uppercase" class="requirement">
+              <i class="check-icon"></i>At least 1 uppercase letter
+            </li>
+            <li id="lowercase" class="requirement">
+              <i class="check-icon"></i>At least 1 lowercase letter
+            </li>
+            <li id="number" class="requirement">
+              <i class="check-icon"></i>At least 1 number
+            </li>
+            <li id="special" class="requirement">
+              <i class="check-icon"></i>At least 1 special character
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div class="form-group">
         {{ form.confirm_password.label }} {{
-        form.confirm_password(class="form-control") }} {% for error in
+        form.confirm_password(class="form-control") }} {% if
+        form.confirm_password.errors %} {% for error in
         form.confirm_password.errors %}
-        <span class="error">{{ error }}</span>
-        {% endfor %}
+        <span class="error-message">{{ error }}</span>
+        {% endfor %} {% endif %}
       </div>
 
-      <div class="form-group">
-        <label>验证码</label>
-        {{ form.recaptcha }}
-      </div>
+      <div class="form-group">{{ form.recaptcha }}</div>
 
-      <button type="submit" id="submit-btn" class="btn btn-primary">
-        注册
-      </button>
+      {{ form.submit(class="btn btn-primary") }}
+
+      <div class="auth-links">
+        <a href="{{ url_for('main.login') }}" class="link"
+          >Already have an account? Login</a
+        >
+      </div>
     </form>
   </div>
 </div>
@@ -193,17 +202,10 @@
   .password-requirements {
     margin-top: 0.5rem;
     padding: 1rem;
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background-color: #f9fafb;
     border-radius: 8px;
     font-size: 0.9rem;
-  }
-
-  .password-requirements h4 {
-    color: #4a5568;
-    margin-bottom: 0.8rem;
-    font-size: 0.9rem;
-    font-weight: 600;
+    transition: all 0.3s ease;
   }
 
   .password-requirements ul {
@@ -216,32 +218,36 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #dc3545;
+    color: #9ca3af;
     margin: 0.5rem 0;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+    font-size: 0.8rem;
   }
 
   .password-requirements li.valid {
-    color: #28a745;
+    color: #34d399;
+    transform: translateX(2px);
   }
 
   .check-icon {
-    width: 1.2rem;
-    height: 1.2rem;
+    width: 1rem;
+    height: 1rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-style: normal;
+    transition: all 0.3s ease;
   }
 
   .password-requirements li.valid .check-icon::before {
     content: "✓";
-    color: #28a745;
+    color: #34d399;
+    transform: scale(1.1);
   }
 
   .password-requirements li:not(.valid) .check-icon::before {
     content: "×";
-    color: #dc3545;
+    color: #9ca3af;
   }
 
   .error-message {
@@ -332,14 +338,38 @@
 </style>
 
 <script>
+  function checkPassword(password) {
+    // Check length
+    const lengthRequirement = document.getElementById('length');
+    lengthRequirement.classList.toggle('valid', password.length >= 8);
+
+    // Check uppercase
+    const upperRequirement = document.getElementById('uppercase');
+    upperRequirement.classList.toggle('valid', /[A-Z]/.test(password));
+
+    // Check lowercase
+    const lowerRequirement = document.getElementById('lowercase');
+    lowerRequirement.classList.toggle('valid', /[a-z]/.test(password));
+
+    // Check number
+    const numberRequirement = document.getElementById('number');
+    numberRequirement.classList.toggle('valid', /[0-9]/.test(password));
+
+    // Check special character
+    const specialRequirement = document.getElementById('special');
+    specialRequirement.classList.toggle('valid', 
+      /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    );
+  }
+
   document
     .getElementById("register-form")
     .addEventListener("submit", function (e) {
-      // 移除客户端的重复验证，因为服务器端会处理
+      // Remove client-side duplicate validation as server will handle it
       // const recaptchaResponse = grecaptcha.getResponse();
       // if (!recaptchaResponse) {
       //     e.preventDefault();
-      //     alert("请完成人机验证");
+      //     alert("Please complete the captcha");
       //     return false;
       // }
     });

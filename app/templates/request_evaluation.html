@@ -1,10 +1,10 @@
-{% extends "base.html" %} {% block title %}请求评估{% endblock %} {% block
-content %}
+{% extends "base.html" %} {% block title %}Request Evaluation{% endblock %} {%
+block content %}
 <div class="evaluation-container">
   <div class="evaluation-box">
     <div class="header">
-      <h1>请求评估</h1>
-      <p class="subtitle">请提供您的古董信息</p>
+      <h1>Request Evaluation</h1>
+      <p class="subtitle">Please provide your antique information</p>
     </div>
 
     {% with messages = get_flashed_messages(with_categories=true) %} {% if
@@ -34,15 +34,21 @@ content %}
       </div>
 
       <div class="form-group">
-        {{ form.images.label }} {{ form.images(class="form-control",
+        <label for="file-upload" class="custom-file-upload">
+          <i class="upload-icon">📁</i>
+          <span>Choose Files</span>
+        </label>
+        {{ form.images(id="file-upload", class="form-control hidden",
         multiple=true, accept="image/*", onchange="validateImages(this)") }}
         <small class="text-muted">
-          最多上传5张图片，每张不超过5MB。支持的格式：JPG, PNG, GIF
+          Maximum 5 images, each under 5MB. Supported formats: JPG, PNG, GIF
         </small>
         <div class="error-message" id="image-error"></div>
       </div>
 
-      <button type="submit" class="btn btn-primary">提交评估请求</button>
+      <button type="submit" class="btn btn-primary">
+        Submit Evaluation Request
+      </button>
     </form>
   </div>
 </div>
@@ -54,25 +60,25 @@ content %}
     const errorDiv = document.getElementById('image-error');
 
     if (input.files.length > maxImages) {
-      errorDiv.textContent = `最多只能上传${maxImages}张图片`;
-      input.value = ''; // 清空选择
+      errorDiv.textContent = `Maximum ${maxImages} images allowed`;
+      input.value = ''; // Clear selection
       return false;
     }
 
-    // 检查每个文件的大小
+    // Check each file size
     for (let file of input.files) {
       if (file.size > maxSize) {
-        errorDiv.textContent = '每个文件不能超过5MB';
+        errorDiv.textContent = 'Each file must be under 5MB';
         input.value = '';
         return false;
       }
     }
 
-    errorDiv.textContent = ''; // 清空错误信息
+    errorDiv.textContent = ''; // Clear error message
     return true;
   }
 
-  // 表单提交前再次验证
+  // Validate again before form submission
   document.querySelector('.evaluation-form').addEventListener('submit', function(e) {
     const input = document.querySelector('input[type="file"]');
     if (!validateImages(input)) {
@@ -167,6 +173,31 @@ content %}
     color: #e53e3e;
     font-size: 0.875rem;
     margin-top: 0.5rem;
+  }
+
+  .custom-file-upload {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    background: #f3f4f6;
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    text-align: center;
+    width: 100%;
+    transition: all 0.3s ease;
+  }
+
+  .custom-file-upload:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+  }
+
+  .upload-icon {
+    margin-right: 0.5rem;
+  }
+
+  .hidden {
+    display: none;
   }
 </style>
 {% endblock %}

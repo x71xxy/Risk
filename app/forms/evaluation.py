@@ -4,36 +4,36 @@ from wtforms.validators import DataRequired, Length, ValidationError
 from flask import current_app
 
 class EvaluationRequestForm(FlaskForm):
-    title = StringField('物品名称', validators=[
+    title = StringField('Item Name', validators=[
         DataRequired(),
         Length(min=2, max=100)
     ])
     
-    description = TextAreaField('物品描述', validators=[
+    description = TextAreaField('Item Description', validators=[
         DataRequired(),
         Length(min=10, max=1000)
     ])
     
-    category = SelectField('物品类别', choices=[
-        ('furniture', '家具'),
-        ('porcelain', '瓷器'),
-        ('painting', '字画'),
-        ('jade', '玉器'),
-        ('other', '其他')
+    category = SelectField('Category', choices=[
+        ('furniture', 'Furniture'),
+        ('porcelain', 'Porcelain'),
+        ('painting', 'Painting'),
+        ('jade', 'Jade'),
+        ('other', 'Other')
     ], validators=[DataRequired()])
     
-    contact_preference = SelectField('联系方式偏好', choices=[
-        ('email', '邮箱'),
-        ('phone', '电话'),
-        ('both', '都可以')
+    contact_preference = SelectField('Contact Preference', choices=[
+        ('email', 'Email'),
+        ('phone', 'Phone'),
+        ('both', 'Both')
     ], validators=[DataRequired()])
     
-    images = MultipleFileField('上传图片')
+    images = MultipleFileField('Upload Images')
     
     def validate_images(self, field):
         if not field.data:
             return
         
-        # 检查文件数量
+        # Check file count
         if len(field.data) > current_app.config['MAX_IMAGE_COUNT']:
-            raise ValidationError(f'最多只能上传{current_app.config["MAX_IMAGE_COUNT"]}张图片') 
+            raise ValidationError(f'Maximum {current_app.config["MAX_IMAGE_COUNT"]} images allowed')

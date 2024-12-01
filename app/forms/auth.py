@@ -18,84 +18,84 @@ from wtforms.validators import ValidationError
 from ..models.user import User
 
 class RegistrationForm(FlaskForm):
-    username = StringField('用户名', validators=[
+    username = StringField('Username', validators=[
         DataRequired(),
         Length(min=2, max=20)
     ])
     
-    email = EmailField('邮箱', validators=[
+    email = EmailField('Email', validators=[
         DataRequired(),
         Email()
     ])
     
-    phone = TelField('手机号码(选填)', validators=[
+    phone = TelField('Phone Number (Optional)', validators=[
         Optional(),
         Length(min=11, max=11)
     ])
     
-    password = PasswordField('密码', validators=[
+    password = PasswordField('Password', validators=[
         DataRequired(),
         Length(min=8)
     ])
     
-    confirm_password = PasswordField('确认密码', validators=[
+    confirm_password = PasswordField('Confirm Password', validators=[
         DataRequired(),
         EqualTo('password')
     ])
     
     recaptcha = RecaptchaField()
     
-    submit = SubmitField('注册')
+    submit = SubmitField('Register')
     
     def validate_username(self, field):
         if User.query.filter_by(username=field.data).first():
-            raise ValidationError('用户名已被使用')
+            raise ValidationError('Username already taken')
             
     def validate_email(self, field):
         if User.query.filter_by(email=field.data).first():
-            raise ValidationError('邮箱已被注册')
+            raise ValidationError('Email already registered')
             
     def validate_phone(self, field):
         if field.data:
             if not field.data.isdigit():
-                raise ValidationError('请输入有效的手机号码')
+                raise ValidationError('Please enter a valid phone number')
             if User.query.filter_by(phone=field.data).first():
-                raise ValidationError('该手机号码已被注册') 
+                raise ValidationError('Phone number already registered')
 
 class LoginForm(FlaskForm):
-    username = StringField('用户名', validators=[DataRequired()])
-    password = PasswordField('密码', validators=[DataRequired()])
-    remember_me = BooleanField('记住我')
-    submit = SubmitField('登录')
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember Me')
+    submit = SubmitField('Login')
 
 class ResetPasswordRequestForm(FlaskForm):
-    email = EmailField('邮箱', validators=[
+    email = EmailField('Email', validators=[
         DataRequired(),
         Email()
     ])
-    submit = SubmitField('发送重置链接')
+    submit = SubmitField('Send Reset Link')
 
 class ResetPasswordForm(FlaskForm):
-    password = PasswordField('新密码', validators=[
-        DataRequired(message='请输入新密码'),
-        Length(min=6, message='密码长度至少为6个字符')
+    password = PasswordField('New Password', validators=[
+        DataRequired(message='Please enter a new password'),
+        Length(min=6, message='Password must be at least 6 characters long')
     ])
-    confirm_password = PasswordField('确认密码', validators=[
-        DataRequired(message='请再次输入密码'),
-        EqualTo('password', message='两次输入的密码不一致')
+    confirm_password = PasswordField('Confirm Password', validators=[
+        DataRequired(message='Please confirm your password'),
+        EqualTo('password', message='Passwords must match')
     ])
-    submit = SubmitField('重置密码')
+    submit = SubmitField('Reset Password')
 
 class Enable2FAForm(FlaskForm):
-    token = StringField('验证码', validators=[
+    token = StringField('Authentication Code', validators=[
         DataRequired(),
         Length(min=6, max=6)
     ])
-    submit = SubmitField('启用双因素认证')
+    submit = SubmitField('Enable 2FA')
 
 class Verify2FAForm(FlaskForm):
-    token = StringField('验证码', validators=[
+    token = StringField('Authentication Code', validators=[
         DataRequired(),
         Length(min=6, max=6)
     ])
-    submit = SubmitField('验证') 
+    submit = SubmitField('Verify') 

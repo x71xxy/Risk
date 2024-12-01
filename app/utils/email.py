@@ -6,7 +6,7 @@ import jwt
 from datetime import datetime, timedelta
 
 def send_verification_email(temp_user):
-    """发送验证邮件"""
+    """Send verification email"""
     try:
         verification_url = url_for(
             'main.verify_email',
@@ -15,26 +15,29 @@ def send_verification_email(temp_user):
         )
         
         msg = Message(
-            subject='验证您的 Lovejoy 古董评估账号',
+            subject='Verify Your Lovejoy Antiques Account',
             recipients=[temp_user.email]
         )
         
-        msg.body = f'''亲爱的 {temp_user.username}：
-感谢您注册 Lovejoy 古董评估平台！请点击以下链接验证您的邮箱：
+        msg.body = f'''Dear {temp_user.username},
+
+Thank you for registering with Lovejoy Antiques! Please click the following link to verify your email:
 {verification_url}
-此链接将在1小时后失效。
-如果这不是您的操作，请忽略此邮件。
-祝好，
-Lovejoy 古董评估团队'''
+
+This link will expire in 1 hour.
+If you did not request this, please ignore this email.
+
+Best regards,
+Lovejoy Antiques Team'''
 
         mail.send(msg)
         return True
     except Exception as e:
-        current_app.logger.error(f"发送验证邮件失败: {str(e)}")
+        current_app.logger.error(f"Failed to send verification email: {str(e)}")
         return False
 
 def generate_token(email):
-    """生成验证令牌"""
+    """Generate verification token"""
     return jwt.encode(
         {
             'email': email,
@@ -45,19 +48,19 @@ def generate_token(email):
     )
 
 def send_reset_email(user):
-    """发送密码重置邮件"""
+    """Send password reset email"""
     token = generate_reset_token(user.email)
     msg = Message(
-        '重置您的密码',
+        'Reset Your Password',
         recipients=[user.email]
     )
     reset_url = url_for('main.reset_password', token=token, _external=True)
-    msg.body = f'''要重置您的密码，请访问以下链接：{reset_url}
-如果您没有请求重置密码，请忽略此邮件。'''
+    msg.body = f'''To reset your password, visit the following link: {reset_url}
+If you did not request a password reset, please ignore this email.'''
     mail.send(msg)
 
 def verify_reset_token(token):
-    """验证重置令牌"""
+    """Verify reset token"""
     try:
         data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
         return data['reset_password']
@@ -65,7 +68,7 @@ def verify_reset_token(token):
         return None
 
 def generate_reset_token(email):
-    """生成密码重置令牌"""
+    """Generate password reset token"""
     expires = datetime.utcnow() + timedelta(minutes=30)
     return jwt.encode(
         {'reset_password': email, 'exp': expires},

@@ -1,44 +1,44 @@
 from datetime import datetime
 from app import db
-from .user import User  # 导入 User 模型
+from .user import User  # Import User model
 
 class EvaluationRequest(db.Model):
-    """评估请求模型"""
+    """Evaluation request model"""
     __tablename__ = 'evaluation_requests'
     
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    title = db.Column(db.String(100), nullable=False)  # 物品名称
-    description = db.Column(db.Text, nullable=False)   # 物品描述
-    category = db.Column(db.String(50), nullable=False)  # 物品类别
-    contact_preference = db.Column(db.String(20), nullable=False)  # 联系方式偏好
-    images = db.Column(db.JSON)  # 图片路径
+    title = db.Column(db.String(100), nullable=False)  # Item name
+    description = db.Column(db.Text, nullable=False)   # Item description
+    category = db.Column(db.String(50), nullable=False)  # Item category
+    contact_preference = db.Column(db.String(20), nullable=False)  # Contact preference
+    images = db.Column(db.JSON)  # Image paths
     status = db.Column(
         db.String(20),
         default='pending',
         nullable=False
     )
     
-    # 时间戳
+    # Timestamps
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    # 关系
+    # Relationships
     user = db.relationship('User', backref=db.backref('evaluation_requests', lazy=True))
     
     STATUS_CHOICES = {
-        'pending': '待处理',
-        'in_progress': '评估中',
-        'completed': '已完成',
-        'cancelled': '已取消'
+        'pending': 'Pending',
+        'in_progress': 'In Progress',
+        'completed': 'Completed',
+        'cancelled': 'Cancelled'
     }
     
     CATEGORY_CHOICES = {
-        'furniture': '家具',
-        'porcelain': '瓷器',
-        'painting': '字画',
-        'jade': '玉器',
-        'other': '其他'
+        'furniture': 'Furniture',
+        'porcelain': 'Porcelain',
+        'painting': 'Painting',
+        'jade': 'Jade',
+        'other': 'Other'
     }
     
     def __init__(self, user_id, title, description, category, contact_preference, images=None):
@@ -50,7 +50,7 @@ class EvaluationRequest(db.Model):
         self.images = images or []
     
     def to_dict(self):
-        """转为字典格式"""
+        """Convert to dictionary format"""
         return {
             'id': self.id,
             'title': self.title,
@@ -64,9 +64,9 @@ class EvaluationRequest(db.Model):
         } 
     
     def get_status_display(self):
-        """获取状态的显示文本"""
+        """Get display text for status"""
         return self.STATUS_CHOICES.get(self.status, self.status)
     
     def get_category_display(self):
-        """获取类别的显示文本"""
+        """Get display text for category"""
         return self.CATEGORY_CHOICES.get(self.category, self.category)
