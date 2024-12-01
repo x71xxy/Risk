@@ -16,13 +16,15 @@
       body {
         min-height: 100vh;
         background-color: #f5f5f5;
+        display: flex;
+        flex-direction: column;
       }
 
       .navbar {
-        background-color: #fff;
+        background-color: #1a365d;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         padding: 1rem 2rem;
-        position: fixed;
+        position: sticky;
         top: 0;
         left: 0;
         right: 0;
@@ -40,8 +42,13 @@
       .nav-brand {
         font-size: 1.5rem;
         font-weight: bold;
-        color: #333;
+        color: white;
         text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .nav-brand:hover {
+        color: #63b3ed;
       }
 
       .nav-links {
@@ -51,19 +58,24 @@
       }
 
       .nav-link {
-        color: #666;
+        color: #e2e8f0;
         text-decoration: none;
         font-weight: 500;
-        transition: color 0.3s ease;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.3s ease;
       }
 
       .nav-link:hover {
-        color: #007bff;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
       }
 
       .main-content {
-        padding-top: 4rem;
+        flex: 1;
         min-height: calc(100vh - 4rem);
+        display: flex;
+        flex-direction: column;
       }
 
       .container {
@@ -125,6 +137,11 @@
           width: 100%;
           text-align: center;
         }
+
+        .nav-link {
+          width: 100%;
+          padding: 0.75rem;
+        }
       }
     </style>
     {% block styles %}{% endblock %}
@@ -137,14 +154,14 @@
         >
         <div class="nav-links">
           {% if current_user.is_authenticated %}
-          <a href="{{ url_for('main.home') }}" class="nav-link">首页</a>
           <a href="{{ url_for('main.request_evaluation') }}" class="nav-link"
             >请求评估</a
           >
           <a href="{{ url_for('main.my_evaluations') }}" class="nav-link"
             >我的评估</a
           >
-          <a href="{{ url_for('main.logout') }}" class="nav-link">退出登录</a>
+          <a href="{{ url_for('main.profile') }}" class="nav-link">个人资料</a>
+          <a href="{{ url_for('main.logout') }}" class="nav-link">退出</a>
           {% else %}
           <a href="{{ url_for('main.login') }}" class="nav-link">登录</a>
           <a href="{{ url_for('main.register') }}" class="nav-link">注册</a>

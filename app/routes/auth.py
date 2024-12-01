@@ -15,11 +15,17 @@ from app.forms import (
     RegistrationForm,
     LoginForm,
     ResetPasswordRequestForm,
-    ResetPasswordForm
+    ResetPasswordForm,
+    Enable2FAForm,
+    Verify2FAForm
 )
 from . import main
 from datetime import datetime, timedelta
 from flask import current_app
+import pyotp
+import qrcode
+import io
+import base64
 
 @main.route('/register', methods=['GET', 'POST'])
 def register():
@@ -176,15 +182,19 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         
         if user and user.check_password(form.password.data):
-            if not user.is_verified:  # 注意这里改为 is_verified
+            if not user.is_verified:
                 flash('请先验证您的邮箱', 'error')
                 return render_template('login.html', form=form)
+                
+            if user.is_2fa_enabled:
+                session['2fa_user_id'] = user.id
+                return redirect(url_for('main.verify_2fa'))
                 
             login_user(user)
             next_page = request.args.get('next')
             if next_page:
                 return redirect(next_page)
-            return redirect(url_for('main.home'))
+            return redirect(url_for('main.profile'))
             
         flash('用户名或密码错误', 'error')
         
@@ -236,4 +246,70 @@ def reset_password(token):
         flash('密码已重置，请使用新密码登录', 'success')
         return redirect(url_for('main.login'))
         
-    return render_template('reset_password.html', form=form) 
+    return render_template('reset_password.html', form=form)
+
+@main.route('/setup_2fa', methods=['GET', 'POST'])
+@login_required
+def setup_2fa():
+    if current_user.is_2fa_enabled:
+        flash('双因素认证已经启用', 'info')
+        return redirect(url_for('main.profile'))
+        
+    form = Enable2FAForm()
+    
+    if request.method == 'GET':
+        # 生成新的 OTP 密钥
+        secret = current_user.generate_otp_secret()
+        db.session.commit()
+        
+        # 生成 QR 码
+        qr = qrcode.QRCode(version=1, box_size=10, border=5)
+        qr.add_data(current_user.get_totp_uri())
+        qr.make(fit=True)
+        
+        img = qr.make_image(fill_color="black", back_color="white")
+        buffered = io.BytesIO()
+        img.save(buffered, format="PNG")
+        qr_code = base64.b64encode(buffered.getvalue()).decode()
+        
+        return render_template(
+            'setup_2fa.html',
+            form=form,
+            qr_code=f"data:image/png;base64,{qr_code}",
+            secret=current_user.otp_secret
+        )
+        
+    if form.validate_on_submit():
+        if current_user.verify_totp(form.token.data):
+            current_user.is_2fa_enabled = True
+            db.session.commit()
+            flash('双因素认证已成功启用', 'success')
+            return redirect(url_for('main.profile'))
+        else:
+            flash('验证码无效', 'error')
+            
+    return render_template('setup_2fa.html', form=form)
+
+@main.route('/verify_2fa', methods=['GET', 'POST'])
+def verify_2fa():
+    if not session.get('2fa_user_id'):
+        return redirect(url_for('main.login'))
+        
+    form = Verify2FAForm()
+    
+    if form.validate_on_submit():
+        user = User.query.get(session['2fa_user_id'])
+        if user and user.verify_totp(form.token.data):
+            login_user(user)
+            session.pop('2fa_user_id', None)
+            return redirect(url_for('main.home'))
+        else:
+            flash('验证码无效', 'error')
+            
+    return render_template('verify_2fa.html', form=form)
+
+@main.route('/profile')
+@login_required
+def profile():
+    """用户个人资料页面"""
+    return render_template('profile.html') 

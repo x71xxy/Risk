@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, login_manager
 from itsdangerous import URLSafeTimedSerializer
 from flask import current_app
+import pyotp
 
 from datetime import datetime
 from app import db
@@ -19,6 +20,10 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(512), nullable=False)
     is_verified = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # 添加 2FA 相关字段
+    otp_secret = db.Column(db.String(32))  # OTP 密钥
+    is_2fa_enabled = db.Column(db.Boolean, default=False)  # 是否启用 2FA
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -44,6 +49,27 @@ class User(UserMixin, db.Model):
     def get_id(self):
         """获取用户ID"""
         return str(self.id)
+    
+    def get_totp_uri(self):
+        """获取 TOTP URI，用于生成二维码"""
+        if self.otp_secret:
+            return pyotp.totp.TOTP(self.otp_secret).provisioning_uri(
+                name=self.email,
+                issuer_name="Lovejoy古董评估"
+            )
+        return None
+    
+    def verify_totp(self, token):
+        """验证 TOTP token"""
+        if self.otp_secret:
+            totp = pyotp.TOTP(self.otp_secret)
+            return totp.verify(token)
+        return False
+    
+    def generate_otp_secret(self):
+        """生成新的 OTP 密钥"""
+        self.otp_secret = pyotp.random_base32()
+        return self.otp_secret
 
 class TempUser(db.Model):
     __tablename__ = 'temp_users'

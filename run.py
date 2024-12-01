@@ -8,6 +8,7 @@ app = create_app()
 
 if __name__ == '__main__':
     with app.app_context():
+        app.config['WTF_CSRF_ENABLED'] = True
         db.create_all()  # 重新创建表
     
     debug_mode = os.environ.get('FLASK_ENV') == 'development'

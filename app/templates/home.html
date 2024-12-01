@@ -4,113 +4,87 @@
   <div class="hero-content">
     <h1>欢迎来到Lovejoy古董评估</h1>
     <p class="subtitle">这里是值得信赖的古董评估平台</p>
-    {% if not current_user.is_authenticated %}
-    <div class="cta-buttons">
+    {% if current_user.is_authenticated %}
+    <p class="welcome-text">欢迎回来，{{ current_user.username }}!</p>
+    <div class="action-buttons">
+      <a href="{{ url_for('main.request_evaluation') }}" class="btn btn-primary"
+        >开始评估</a
+      >
+      <a href="{{ url_for('main.my_evaluations') }}" class="btn btn-outline"
+        >查看历史评估</a
+      >
+    </div>
+    {% else %}
+    <div class="action-buttons">
       <a href="{{ url_for('main.register') }}" class="btn btn-primary"
         >立即注册</a
       >
-      <a href="{{ url_for('main.login') }}" class="btn btn-outline">登录账号</a>
-    </div>
-    {% else %}
-    <div class="cta-buttons">
-      <div class="welcome-message">欢迎回来，{{ current_user.username }}！</div>
-      <div class="action-buttons">
-        <a
-          href="{{ url_for('main.request_evaluation') }}"
-          class="btn btn-primary"
-          >开始评估</a
-        >
-        <a href="{{ url_for('main.my_evaluations') }}" class="btn btn-outline"
-          >查看历史评估</a
-        >
-      </div>
+      <a href="{{ url_for('main.login') }}" class="btn btn-outline">登录</a>
     </div>
     {% endif %}
   </div>
 </div>
 
 <div class="features-section">
-  <div class="container">
-    <h2>我们的服务</h2>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🏺</div>
-        <h3>专业评估</h3>
-        <p>由资深专家提供准确的古董价值评估</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔒</div>
-        <h3>安全可靠</h3>
-        <p>严格的信息保护机制确保您的隐私安全</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>快速响应</h3>
-        <p>高效的评估流程，快速获得专业意见</p>
-      </div>
+  <h2 class="section-title">我们的服务</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🏺</div>
+      <h3>专业评估</h3>
+      <p>由资深专家提供准确的古董价值评估</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>安全可靠</h3>
+      <p>严格的信息保护机制确保您的隐私安全</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>快速响应</h3>
+      <p>高效的评估流程，快速获得专业意见</p>
     </div>
   </div>
 </div>
 
 <style>
-  /* 添加欢迎消息样式 */
-  .welcome-message {
-    color: white;
-    font-size: 1.2rem;
-    margin: 1rem 0;
-    animation: fadeInUp 0.8s ease-out 0.2s backwards;
-  }
-
-  /* 其他样式保持不变 */
   .hero-section {
     background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
     color: white;
     padding: 6rem 2rem;
     text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-section::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url("/static/images/pattern.png") repeat;
-    opacity: 0.1;
   }
 
   .hero-content {
     max-width: 800px;
     margin: 0 auto;
-    position: relative;
-    z-index: 1;
   }
 
-  .hero-section h1 {
+  .hero-content h1 {
     font-size: 3rem;
     margin-bottom: 1rem;
-    animation: fadeInUp 0.8s ease-out;
   }
 
   .subtitle {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
+    color: #e2e8f0;
     margin-bottom: 2rem;
-    opacity: 0.9;
-    animation: fadeInUp 0.8s ease-out 0.2s backwards;
   }
 
-  .cta-buttons {
+  .welcome-text {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .action-buttons {
     display: flex;
     gap: 1rem;
     justify-content: center;
-    animation: fadeInUp 0.8s ease-out 0.4s backwards;
   }
 
   .btn {
-    padding: 1rem 2rem;
+    padding: 0.75rem 1.5rem;
     border-radius: 8px;
     font-weight: 500;
     text-decoration: none;
@@ -118,33 +92,34 @@
   }
 
   .btn-primary {
-    background-color: #4299e1;
+    background: #4299e1;
     color: white;
     border: none;
   }
 
   .btn-primary:hover {
-    background-color: #3182ce;
-    transform: translateY(-2px);
+    background: #3182ce;
+    transform: translateY(-1px);
   }
 
   .btn-outline {
-    background-color: transparent;
+    background: transparent;
     color: white;
     border: 2px solid white;
   }
 
   .btn-outline:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
   }
 
   .features-section {
     padding: 4rem 2rem;
-    background-color: white;
+    background: #f7fafc;
+    flex: 1;
   }
 
-  .features-section h2 {
+  .section-title {
     text-align: center;
     font-size: 2rem;
     color: #2d3748;
@@ -157,6 +132,7 @@
     gap: 2rem;
     max-width: 1200px;
     margin: 0 auto;
+    margin-bottom: 2rem;
   }
 
   .feature-card {
@@ -164,51 +140,39 @@
     padding: 2rem;
     border-radius: 12px;
     text-align: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
   }
 
   .feature-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
   }
 
   .feature-icon {
-    font-size: 2.5rem;
+    font-size: 3rem;
     margin-bottom: 1rem;
   }
 
   .feature-card h3 {
     color: #2d3748;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
   }
 
   .feature-card p {
     color: #718096;
-    line-height: 1.6;
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    line-height: 1.5;
   }
 
   @media (max-width: 768px) {
-    .hero-section h1 {
+    .hero-section {
+      padding: 3rem 1rem;
+    }
+
+    .hero-content h1 {
       font-size: 2rem;
     }
 
-    .subtitle {
-      font-size: 1rem;
-    }
-
-    .cta-buttons {
+    .action-buttons {
       flex-direction: column;
     }
 
@@ -216,8 +180,8 @@
       width: 100%;
     }
 
-    .features-grid {
-      grid-template-columns: 1fr;
+    .features-section {
+      padding: 2rem 1rem;
     }
   }
 </style>

@@ -83,4 +83,18 @@ class ResetPasswordForm(FlaskForm):
         DataRequired(),
         EqualTo('password', message='两次输入的密码不一致')
     ])
-    submit = SubmitField('重置密码') 
+    submit = SubmitField('重置密码')
+
+class Enable2FAForm(FlaskForm):
+    token = StringField('验证码', validators=[
+        DataRequired(),
+        Length(min=6, max=6)
+    ])
+    submit = SubmitField('启用双因素认证')
+
+class Verify2FAForm(FlaskForm):
+    token = StringField('验证码', validators=[
+        DataRequired(),
+        Length(min=6, max=6)
+    ])
+    submit = SubmitField('验证') 

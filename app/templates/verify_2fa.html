@@ -1,0 +1,167 @@
+{% extends "base.html" %} {% block title %}验证双因素认证{% endblock %} {% block
+content %}
+<div class="auth-container">
+  <div class="auth-box">
+    <div class="auth-header">
+      <h1>验证双因素认证</h1>
+      <p class="subtitle">请输入您的验证码</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %} {% endif %} {% endwith %}
+
+    <form method="POST" class="auth-form">
+      {{ form.hidden_tag() }}
+
+      <div class="form-group">
+        {{ form.token.label }}
+        <div class="input-wrapper">
+          <i class="icon">🔐</i>
+          {{ form.token(class="form-control", placeholder="输入6位验证码") }}
+        </div>
+        {% if form.token.errors %} {% for error in form.token.errors %}
+        <span class="error-message">{{ error }}</span>
+        {% endfor %} {% endif %}
+      </div>
+
+      {{ form.submit(class="btn btn-primary") }}
+    </form>
+  </div>
+</div>
+
+<style>
+  .auth-container {
+    min-height: calc(100vh - 4rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f6f8fb 0%, #f1f4f8 100%);
+  }
+
+  .auth-box {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 420px;
+    animation: slideUp 0.5s ease-out;
+  }
+
+  .auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .auth-header h1 {
+    color: #2d3748;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: #718096;
+    font-size: 1rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .input-wrapper {
+    position: relative;
+    margin-top: 0.5rem;
+  }
+
+  .icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a0aec0;
+    font-style: normal;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 0.8rem;
+    background: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background: #3182ce;
+    transform: translateY(-1px);
+  }
+
+  .error-message {
+    color: #e53e3e;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
+  .alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+  }
+
+  .alert-error {
+    background: #fed7d7;
+    color: #c53030;
+  }
+
+  .alert-success {
+    background: #c6f6d5;
+    color: #2f855a;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .auth-container {
+      padding: 1rem;
+    }
+
+    .auth-box {
+      padding: 1.5rem;
+    }
+
+    .auth-header h1 {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+{% endblock %}

@@ -163,20 +163,35 @@ content %}
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token() }}",
         },
       })
         .then((response) => response.json())
         .then((data) => {
           if (data.message) {
-            alert(data.message);
-            window.location.href = "/my_evaluations";
+            const notification = document.createElement("div");
+            notification.className = "notification success";
+            notification.textContent = data.message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+              notification.remove();
+              window.location.href = "/my_evaluations";
+            }, 3000);
           } else {
-            alert(data.error || "操作失败");
+            throw new Error(data.error || "操作失败");
           }
         })
         .catch((error) => {
           console.error("Error:", error);
-          alert("操作失败，请重试");
+          const notification = document.createElement("div");
+          notification.className = "notification error";
+          notification.textContent = "操作失败，请重试";
+          document.body.appendChild(notification);
+
+          setTimeout(() => {
+            notification.remove();
+          }, 3000);
         });
     }
   }

@@ -105,26 +105,24 @@ def evaluation_detail(evaluation_id):
 @main.route('/cancel_evaluation/<int:evaluation_id>', methods=['POST'])
 @login_required
 def cancel_evaluation(evaluation_id):
-    evaluation = EvaluationRequest.query.get_or_404(evaluation_id)
-    
-    # 验证用户权限和状态
-    if evaluation.user_id != current_user.id:
-        abort(403)
-    if evaluation.status != 'pending':
-        return jsonify({'error': '只能取消待处理的评估'}), 400
-    
     try:
-        # 删除相关图片
-        if evaluation.images:
-            for image_path in evaluation.images:
-                full_path = os.path.join(current_app.config['UPLOAD_FOLDER'], image_path)
-                if os.path.exists(full_path):
-                    os.remove(full_path)
+        evaluation = EvaluationRequest.query.get_or_404(evaluation_id)
         
-        db.session.delete(evaluation)
+        # 验证用户权限
+        if evaluation.user_id != current_user.id:
+            return jsonify({'error': '无权操作此评估'}), 403
+            
+        # 验证状态
+        if evaluation.status != 'pending':
+            return jsonify({'error': '只能取消待处理的评估'}), 400
+            
+        # 更新状态
+        evaluation.status = 'cancelled'
         db.session.commit()
+        
         return jsonify({'message': '评估已取消'}), 200
+        
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"取消评估失败: {str(e)}")
-        return jsonify({'error': '操作失败'}), 500 
+        return jsonify({'error': '操作失败，请重试'}), 500 
