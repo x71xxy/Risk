@@ -3,37 +3,24 @@
 <div class="auth-container">
   <div class="auth-box">
     <div class="auth-header">
-      <h1>欢迎回来</h1>
-      <p class="subtitle">登录您的Lovejoy账号</p>
+      <h1>登录</h1>
+      <p class="subtitle">欢迎回到Lovejoy古董评估平台</p>
     </div>
 
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %} {% endif %} {% endwith %}
+
     <form method="POST" class="auth-form">
+      {{ form.hidden_tag() }}
+
       <div class="form-group">
-        <label for="username">用户名</label>
-        <div class="input-wrapper">
-          <i class="icon">👤</i>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            required
-            placeholder="请输入用户名"
-          />
-        </div>
+        {{ form.username.label }} {{ form.username(class="form-control") }}
       </div>
 
       <div class="form-group">
-        <label for="password">密码</label>
-        <div class="input-wrapper">
-          <i class="icon">🔒</i>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            required
-            placeholder="请输入密码"
-          />
-        </div>
+        {{ form.password.label }} {{ form.password(class="form-control") }}
       </div>
 
       <button type="submit" class="btn btn-primary">登录</button>
@@ -42,9 +29,9 @@
         <a href="{{ url_for('main.register') }}" class="link">
           还没有账号？立即注册
         </a>
-        <a href="{{ url_for('main.reset_password_request') }}" class="link"
-          >忘记密码？</a
-        >
+        <a href="{{ url_for('main.reset_password_request') }}" class="link">
+          忘记密码？
+        </a>
       </div>
     </form>
   </div>
@@ -67,7 +54,6 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     width: 100%;
     max-width: 420px;
-    animation: slideUp 0.5s ease-out;
   }
 
   .auth-header {
@@ -81,127 +67,54 @@
     margin-bottom: 0.5rem;
   }
 
-  .subtitle {
-    color: #718096;
-    font-size: 1rem;
-  }
-
-  .auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
   .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    margin-bottom: 1.5rem;
   }
 
-  label {
-    color: #4a5568;
-    font-weight: 500;
-    font-size: 0.9rem;
-  }
-
-  .input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-
-  .icon {
-    position: absolute;
-    left: 1rem;
-    color: #a0aec0;
-    font-style: normal;
-  }
-
-  input {
+  .form-control {
     width: 100%;
-    padding: 0.8rem 1rem 0.8rem 2.8rem;
+    padding: 0.75rem 1rem;
     border: 2px solid #e2e8f0;
     border-radius: 8px;
     font-size: 1rem;
-    transition: all 0.3s ease;
-    background-color: #f8fafc;
-  }
-
-  input:focus {
-    outline: none;
-    border-color: #4299e1;
-    background-color: white;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
-  }
-
-  .btn {
-    width: 100%;
-    padding: 0.8rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
   }
 
   .btn-primary {
-    background-color: #4299e1;
+    width: 100%;
+    padding: 0.8rem;
+    background: #4299e1;
     color: white;
-  }
-
-  .btn-primary:hover {
-    background-color: #3182ce;
-    transform: translateY(-1px);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
   }
 
   .auth-links {
+    margin-top: 1.5rem;
     display: flex;
     justify-content: space-between;
-    margin-top: 1rem;
-    font-size: 0.9rem;
   }
 
   .link {
     color: #4299e1;
     text-decoration: none;
-    transition: color 0.3s ease;
   }
 
-  .link:hover {
-    color: #2b6cb0;
-    text-decoration: underline;
+  .alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
   }
 
-  @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .alert-error {
+    background: #fed7d7;
+    color: #c53030;
   }
 
-  @media (max-width: 480px) {
-    .auth-container {
-      padding: 1rem;
-    }
-
-    .auth-box {
-      padding: 1.5rem;
-    }
-
-    .auth-header h1 {
-      font-size: 1.5rem;
-    }
-
-    .auth-links {
-      flex-direction: column;
-      gap: 0.5rem;
-      text-align: center;
-    }
+  .alert-success {
+    background: #c6f6d5;
+    color: #2f855a;
   }
 </style>
 {% endblock %}

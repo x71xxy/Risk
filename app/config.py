@@ -1,30 +1,19 @@
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-secret-key'
-    
-    # 根据环境选择数据库URL
-    if os.environ.get('FLASK_ENV') == 'production':
-        # AWS RDS配置
-        SQLALCHEMY_DATABASE_URI = os.environ.get('AWS_DATABASE_URL')
-    else:
-        # 本地开发配置
-        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-            'mysql+pymysql://username:password@localhost/lovejoy_db'
-    
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-123'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
-    # 文件上传配置
-    UPLOAD_FOLDER = 'app/static/uploads'
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max-limit
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    # reCAPTCHA配置
+    RECAPTCHA_USE_SSL = False
+    RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY')
+    RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
+    RECAPTCHA_OPTIONS = {'theme': 'light'}
     
-    # 邮件服务器配置
-    MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_PORT = 587
-    MAIL_USE_TLS = True
+    # 邮件配置
+    MAIL_SERVER = os.environ.get('MAIL_SERVER')
+    MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1']
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') 

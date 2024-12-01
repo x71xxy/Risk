@@ -1,0 +1,184 @@
+{% extends "base.html" %} {% block title %}评估详情{% endblock %} {% block
+content %}
+<div class="evaluation-detail-container">
+  <div class="evaluation-detail-box">
+    <div class="evaluation-header">
+      <h1>评估详情</h1>
+      <div class="status-badge {{ evaluation.status }}">
+        {{ evaluation.get_status_display() }}
+      </div>
+    </div>
+
+    <div class="evaluation-info">
+      <div class="info-group">
+        <label>物品名称</label>
+        <p>{{ evaluation.title }}</p>
+      </div>
+
+      <div class="info-group">
+        <label>物品类别</label>
+        <p>{{ evaluation.get_category_display() }}</p>
+      </div>
+
+      <div class="info-group">
+        <label>提交时间</label>
+        <p>{{ evaluation.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+      </div>
+
+      <div class="info-group">
+        <label>物品描述</label>
+        <p class="description">{{ evaluation.description }}</p>
+      </div>
+
+      {% if evaluation.images %}
+      <div class="images-group">
+        <label>上传的图片</label>
+        <div class="image-gallery">
+          {% for image_path in evaluation.images %}
+          <div class="image-item">
+            <img
+              src="{{ url_for('static', filename='uploads/' + image_path) }}"
+              alt="评估图片"
+            />
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    {% if evaluation.status == 'pending' %}
+    <div class="evaluation-actions">
+      <button
+        onclick="cancelEvaluation({{ evaluation.id }})"
+        class="btn btn-danger"
+      >
+        取消评估
+      </button>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .evaluation-detail-container {
+    padding: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .evaluation-detail-box {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .evaluation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+  }
+
+  .status-badge.pending {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .status-badge.in_progress {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  .status-badge.completed {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .status-badge.cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .info-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .info-group label {
+    display: block;
+    color: #4b5563;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .description {
+    white-space: pre-line;
+  }
+
+  .image-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .image-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .evaluation-actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .btn-danger {
+    background: #ef4444;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .btn-danger:hover {
+    background: #dc2626;
+  }
+</style>
+
+<script>
+  function cancelEvaluation(evaluationId) {
+    if (confirm("确定要取消这个评估请求吗？")) {
+      fetch(`/cancel_evaluation/${evaluationId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.message) {
+            alert(data.message);
+            window.location.href = "/my_evaluations";
+          } else {
+            alert(data.error || "操作失败");
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("操作失败，请重试");
+        });
+    }
+  }
+</script>
+{% endblock %}

@@ -8,28 +8,50 @@ content %}
     <div class="evaluations-list">
       {% for evaluation in evaluations %}
       <div class="evaluation-card">
-        <h3>{{ evaluation.title }}</h3>
+        <div class="evaluation-header">
+          <h3>{{ evaluation.title }}</h3>
+          <span class="status-badge {{ evaluation.status }}"
+            >{{ evaluation.status }}</span
+          >
+        </div>
+
         <div class="evaluation-info">
-          <p><strong>状态：</strong> {{ evaluation.status }}</p>
+          <p><strong>类别：</strong>{{ evaluation.category }}</p>
           <p>
-            <strong>提交时间：</strong> {{
+            <strong>提交时间：</strong>{{
             evaluation.created_at.strftime('%Y-%m-%d %H:%M') }}
           </p>
           {% if evaluation.estimated_value %}
-          <p><strong>估价：</strong> ¥{{ evaluation.estimated_value }}</p>
+          <p>
+            <strong>估价：</strong>¥{{ "%.2f"|format(evaluation.estimated_value)
+            }}
+          </p>
           {% endif %}
         </div>
+
         <div class="evaluation-actions">
-          <a href="#" class="btn btn-outline">查看详情</a>
+          <a
+            href="{{ url_for('main.evaluation_detail', evaluation_id=evaluation.id) }}"
+            class="btn btn-primary"
+            >查看详情</a
+          >
+          {% if evaluation.status == 'pending' %}
+          <button
+            onclick="cancelEvaluation({{ evaluation.id }})"
+            class="btn btn-danger"
+          >
+            取消评估
+          </button>
+          {% endif %}
         </div>
       </div>
       {% endfor %}
     </div>
     {% else %}
     <div class="no-evaluations">
-      <p>您还没有提交过评估请求</p>
+      <p>暂无评估记录</p>
       <a href="{{ url_for('main.request_evaluation') }}" class="btn btn-primary"
-        >开始第一次评估</a
+        >开始评估</a
       >
     </div>
     {% endif %}
@@ -38,56 +60,59 @@ content %}
 
 <style>
   .evaluations-container {
-    min-height: calc(100vh - 4rem);
     padding: 2rem;
-    background: linear-gradient(135deg, #f6f8fb 0%, #f1f4f8 100%);
-  }
-
-  .evaluations-box {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
-    background: white;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  }
-
-  h1 {
-    text-align: center;
-    color: #2d3748;
-    margin-bottom: 2rem;
   }
 
   .evaluation-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: white;
     border-radius: 8px;
     padding: 1.5rem;
     margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  .evaluation-card h3 {
-    color: #2d3748;
+  .evaluation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 1rem;
   }
 
-  .evaluation-info {
-    margin-bottom: 1rem;
+  .status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
   }
 
-  .evaluation-info p {
-    margin: 0.5rem 0;
-    color: #4a5568;
+  .status-badge.pending {
+    background: #fef3c7;
+    color: #92400e;
   }
 
-  .no-evaluations {
-    text-align: center;
-    padding: 2rem;
-    color: #718096;
-  }
-
-  .no-evaluations .btn {
+  .evaluation-actions {
+    display: flex;
+    gap: 1rem;
     margin-top: 1rem;
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-primary {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .btn-danger {
+    background: #ef4444;
+    color: white;
   }
 </style>
 {% endblock %}

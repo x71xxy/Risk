@@ -1,111 +1,94 @@
-# Lovejoy's Antique Evaluation System
+# Lovejoy古董评估平台
 
 ## 项目简介
-这是一个基于 Flask 的古董评估网站，为 Lovejoy 古董商店开发的安全网络应用程序。该系统允许客户注册账户并请求对潜在古董物品进行评估。
+基于 Flask 的古董评估系统，实现了完整的用户认证系统和安全防护机制。
 
-## 项目需求
-根据课程作业要求，系统需要实现以下功能：
-1. 用户注册和登录系统
-2. 密码策略实现
-3. "请求评估"页面
-4. 图片上传功能
-5. 评估请求列表页面
+## 项目状态 (Coursework G6077)
 
-## 当前进度
+### Task 1 - 用户注册 (已完成 ✓)
+- [x] 基础注册功能 (register.html, temp_user.py)
+- [x] 验证码集成 (使用 Google reCAPTCHA)
+- [x] 密码策略实现 (config.py中的密码策略配置)
+- [x] 密码加密存储 (使用Werkzeug提供的哈希功能)
+- [x] 电话号码字段添加
 
-### 已完成功能
-1. 基础项目结构搭建
-2. 用户认证系统基础框架
-   - 用户注册页面
-   - 用户登录页面
-   - 登出功能
-3. 数据库模型
-   - User 模型创建及配置
-4. 密码策略实现
-   - 密码强度要求
-     - 最少8个字符
-     - 必须包含大小写字母
-     - 必须包含数字
-     - 必须包含特殊字符
-   - 密码恢复功能
-     - 通过邮箱验证重置密码
-     - 重置密码令牌生成和验证
-5. 开始实现评估请求功能
-   - 创建评估请求数据模型
-   - 设计评估请求表单
-   - 实现图片上传功能
+### Task 2 - 安全登录 (已完成 ✓)
+- [x] 登录功能实现 (使用Flask-Login)
+- [x] 会话安全配置 (secure cookies, httponly)
+- [x] 密码重置功能 (reset_request.html)
+- [x] 会话管理 (Flask-Login session管理)
+- [x] 登录失败次数限制
 
-### 项目结构 
-lovejoy_antiques/
-├── app/
-│ ├── init.py # 应用程序初始化
-│ ├── models/ # 数据库模型
-│ │ ├── init.py
-│ │ ├── user.py # 用户模型
-│ │ └── evaluation.py # 新增：评估请求模型
-│ ├── routes/ # 路由处理
-│ │ ├── init.py
-│ │ ├── auth.py # 认证相关路由
-│ │ └── evaluation.py # 评估相关路由
-│ ├── utils/
-│ │ ├── init.py
-│ │ ├── password_validation.py  # 新增：密码验证工具
-│ │ └── email.py               # 新增：邮件发送工具
-│ └── templates/ # HTML 模板
-│ ├── base.html # 基础模板
-│ ├── home.html # 首页
-│ ├── login.html # 登录页
-│ ├── register.html # 注册页
-│ ├── reset_password.html    # 新增：重置密码页面
-│ ├── reset_request.html     # 新增：请求重置密码页面
-│ ├── request_evaluation.html # 新增：评估请求页面
-│ └── my_evaluations.html # 新增：评估列表页面
-├── config.py # 配置文件
-└── run.py # 应用程序入口
+### Task 3 - 密码策略和恢复 (已完成 ✓)
+- [x] 密码复杂度要求 (config.py中的配置)
+- [x] 密码重置流程 (reset_request.html)
+- [x] 邮箱验证系统 (verify_email.html)
 
-### 技术栈
-- Python Flask 框架
-- SQLAlchemy ORM
-- Flask-Login 用户认证
-- Jinja2 模板引擎
+### Task 4 - 评估请求页面 (已完成 ✓)
+- [x] 评估表单设计 (request_evaluation.html)
+- [x] 图片上传功能 (evaluation.py)
+- [x] 安全文件处理 (文件验证、大小限制)
+- [x] 联系方式偏好选择
 
-### 待完成功能
-1. 密码策略实现
-   - 密码强度要求
-   - 密码恢复功能
-2. 评估请求功能
-   - 创建评估请求表单
-   - 图片上传功能
-3. 评估请求列表页面
-4. 安全性增强
-   - CSRF 保护
-   - XSS 防护
-   - SQL 注入防护
+### Task 5 - 评估列表页面 (已完成 ✓)
+- [x] 评估记录展示 (my_evaluations.html)
+- [x] 评估详情页面 (evaluation_detail.html)
+- [x] 状态管理 (评估状态显示和管理)
+- [x] 访问控制 (用户权限验证)
 
-## 运行说明
-1. 安装依赖：
-   pip install -r requirements.txt
+### Task 6 - AWS VPC (未开始 📅)
+- [ ] VPC 配置
+- [ ] 安全组设置
+- [ ] 子网规划
 
-2. 运行应用：
-   python run.py
+## 安全特性实现
 
-## 当前问题
-- [已解决] 密码哈希字段长度问题：已将 password_hash 字段长度从 128 增加到 256
-- [进行中] 完善用户认证系统
-- [待开始] 实现评估相关功能
+### 密码策略 ✓
+- [x] 密码复杂度要求
+  - 最小长度：8位
+  - 必须包含大小写字母
+  - 必须包含数字和特殊字符
+- [x] 密码加密存储 (Werkzeug)
+- [x] 密码重置功能
 
-## 下一步计划
-1. 完善密码策略
-2. 实现评估请求功能
-3. 添加文件上传功能
-4. 开发评估请求列表页面
-5. 增强系统安全性
+### 漏洞防护 ✓
+- [x] SQL注入防护 (SQLAlchemy ORM)
+- [x] XSS防护 (模板转义)
+- [x] CSRF防护 (Flask-WTF)
+- [x] 文件上传漏洞防护
+  - 类型验证
+  - 大小限制
+  - 安全存储
+- [x] 会话安全
+  + - Cookie 安全配置
+  + - HttpOnly
+  + - Secure in production
 
-## 安全考虑
-项目特别注重安全性，实现了：
-1. 密码加密存储
-2. 用户会话管理
-3. 表单验证
-4. 安全的路由保护
+### 身份验证 ✓
+- [x] 用户注册和登录
+- [x] 邮箱验证
+- [x] 会话管理
+- [ ] 双因素认证 (预留)
 
-后续还将添加更多安全特性以满足课程要求。
+### 攻击防护 ✓
+- [x] 暴力破解限制
+- [x] reCAPTCHA集成
+- [x] 密码哈希加盐
+
+## 技术栈
+- Flask 3.0.0
+- MySQL + SQLAlchemy
+- Flask-Login (会话管理)
+- Flask-WTF (表单处理)
+- Flask-Mail (邮件发送)
+- Werkzeug (密码哈希)
+
+## 待办事项
+- [ ] 完成 VPC 配置
+- [ ] 准备视频演示
+- [ ] 完成自我评估
+
+## 作者
+[您的姓名]
+[您的学号]
+[课程信息]

@@ -1,4 +1,3 @@
-from .user import User
-from .evaluation import EvaluationRequest
+from .user import User, TempUser
 
-__all__ = ['User', 'EvaluationRequest'] 
+__all__ = ['User', 'TempUser']
