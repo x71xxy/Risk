@@ -1,9 +1,11 @@
-{% extends "base.html" %} {% block title %}验证双因素认证{% endblock %} {% block
-content %}
+{% extends "base.html" %} {% block title %}Verify two-factor authentication{%
+endblock %} {% block content %}
 <div class="auth-container">
   <div class="auth-box">
-    <h1>验证双因素认证</h1>
-    <p class="description">请打开 Google Authenticator 应用输入验证码</p>
+    <h1>Verify two-factor authentication</h1>
+    <p class="description">
+      Open the Google Authenticator app and enter the code
+    </p>
 
     <form method="POST" class="auth-form">
       {{ form.hidden_tag() }}
@@ -11,14 +13,14 @@ content %}
       <div class="form-group">
         <div class="input-wrapper">
           <i class="icon">🔐</i>
-          {{ form.token(class="form-control", placeholder="输入6位验证码") }}
+           {{ form.token(class="form-control", placeholder="Enter a 6-digit CAPTCHA") }}
         </div>
         {% if form.token.errors %} {% for error in form.token.errors %}
         <span class="error-message">{{ error }}</span>
         {% endfor %} {% endif %}
       </div>
 
-      <button type="submit" class="submit-btn">验证</button>
+      <button type="submit" class="submit-btn">verification</button>
     </form>
   </div>
 </div>

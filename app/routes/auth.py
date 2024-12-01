@@ -34,15 +34,15 @@ def register():
     form = RegistrationForm()
     
     if request.method == 'POST':
-        print("POST请求数据:", request.form)
+        print("POST request data:", request.form)
         
     if form.validate_on_submit():
-        print("表单证功")
+        print("Form validated")
         try:
             # 检查用户名是否已存在于正式用户表
             existing_user = User.query.filter_by(username=form.username.data).first()
             if existing_user:
-                flash('用户名已被使用', 'error')
+                flash('Username already taken', 'error')
                 return render_template('register.html', form=form)
             
             # 检查用户名是否已存在于临时用户表
@@ -53,13 +53,13 @@ def register():
                     db.session.delete(existing_temp_user)
                     db.session.commit()
                 else:
-                    flash('用户名已被使用，请等待验证邮件或选择其他用户名', 'error')
+                    flash('Username is taken, please wait for verification email or choose another username', 'error')
                     return render_template('register.html', form=form)
                 
             # 检查邮箱是否已存在于正式用户表
             existing_email = User.query.filter_by(email=form.email.data).first()
             if existing_email:
-                flash('该邮箱已被注册', 'error')
+                flash('Email already registered', 'error')
                 return render_template('register.html', form=form)
                 
             # 检查邮箱是否已存在于临时用户表
@@ -70,7 +70,7 @@ def register():
                     db.session.delete(existing_temp_email)
                     db.session.commit()
                 else:
-                    flash('该邮箱已被注册，请等待验证邮件或使用其他邮箱', 'error')
+                    flash('Email is registered, please wait for verification email or use another email', 'error')
                     return render_template('register.html', form=form)
             
             # 验证密码复杂度
@@ -81,7 +81,7 @@ def register():
                 
             # 验证两次密码是否一致
             if form.password.data != form.confirm_password.data:
-                flash('两次输入的密码不一致', 'error')
+                flash('Passwords do not match', 'error')
                 return render_template('register.html', form=form)
             
             # 创建临时用户
@@ -103,23 +103,23 @@ def register():
             
             # 发送验证邮件
             if send_verification_email(temp_user):
-                flash('请查收验证邮件完成注册。', 'success')
+                flash('Please check your email to complete registration.', 'success')
             else:
-                flash('验证邮件发送失败，请重试。', 'error')
+                flash('Failed to send verification email, please try again.', 'error')
                 return render_template('register.html', form=form)
             
             return redirect(url_for('main.register_pending'))
             
         except Exception as e:
             db.session.rollback()
-            current_app.logger.error(f"注册失败: {str(e)}")
-            flash('注册失败，请重试。如果问题持续存在，请联系客服。', 'error')
+            current_app.logger.error(f"Registration failed: {str(e)}")
+            flash('Registration failed. Please try again or contact support if the problem persists.', 'error')
             
     else:
         # 打印具体的验证错误信息
-        print("表单验证失败")
+        print("Form validation failed")
         for field, errors in form.errors.items():
-            print(f"字段 {field} 的错误: {errors}")
+            print(f"Field {field} errors: {errors}")
             for error in errors:
                 flash(f"{form[field].label.text}: {error}", 'error')
                 
@@ -135,13 +135,13 @@ def verify_email(token):
         temp_user = TempUser.query.filter_by(verify_token=token).first()
         
         if not temp_user:
-            flash('验证链接无效或已过期', 'error')
+            flash('Invalid or expired verification link', 'error')
             return redirect(url_for('main.register'))
             
         if datetime.now() > temp_user.expires_at:
             db.session.delete(temp_user)
             db.session.commit()
-            flash('验证链接已过期，请重新注册', 'error')
+            flash('Verification link expired, please register again', 'error')
             return redirect(url_for('main.register'))
             
         # 创建正式用户
@@ -157,18 +157,18 @@ def verify_email(token):
             db.session.add(user)
             db.session.delete(temp_user)
             db.session.commit()
-            flash('邮箱验证成功！请登录', 'success')
+            flash('Email verified successfully! Please login', 'success')
             return redirect(url_for('main.login'))
             
         except Exception as e:
             db.session.rollback()
-            current_app.logger.error(f"验证失败: {str(e)}")
-            flash('验证失败，请重试', 'error')
+            current_app.logger.error(f"Verification failed: {str(e)}")
+            flash('Verification failed, please try again', 'error')
             return redirect(url_for('main.register'))
             
     except Exception as e:
-        current_app.logger.error(f"验证过程出错: {str(e)}")
-        flash('验证过程出错，请重试', 'error')
+        current_app.logger.error(f"Verification process error: {str(e)}")
+        flash('Verification process error, please try again', 'error')
         return redirect(url_for('main.register'))
 
 @main.route('/login', methods=['GET', 'POST'])
@@ -183,7 +183,7 @@ def login():
         # 检查账户是否被锁定
         if user and user.locked_until and user.locked_until > datetime.utcnow():
             remaining_time = (user.locked_until - datetime.utcnow()).seconds // 60
-            flash(f'账户已被锁定，请 {remaining_time} 分钟后重试', 'error')
+            flash(f'Account is locked, please try again in {remaining_time} minutes', 'error')
             return render_template('login.html', form=form)
             
         # 检查密码
@@ -213,13 +213,13 @@ def login():
                 # 如果失败次数达到限制
                 if user.login_attempts >= 5:
                     user.locked_until = datetime.utcnow() + timedelta(minutes=30)
-                    flash('登录失败次数过多，账户已被锁定30分钟', 'error')
+                    flash('Too many failed login attempts, account locked for 30 minutes', 'error')
                 else:
                     remaining_attempts = 5 - user.login_attempts
-                    flash(f'密码错误，还剩 {remaining_attempts} 次尝试机会', 'error')
+                    flash(f'Incorrect password, {remaining_attempts} attempts remaining', 'error')
                 db.session.commit()
             else:
-                flash('用户名或密码错误', 'error')
+                flash('Invalid username or password', 'error')
             
     return render_template('login.html', form=form)
 
@@ -231,31 +231,29 @@ def logout():
 
 @main.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
-        email = request.form.get('email')
-        user = User.query.filter_by(email=email).first()
-        
+        user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_reset_email(user)
-            flash('重置密码的邮件已发送，请查收', 'success')
+            flash('Check your email for instructions to reset your password', 'info')
             return redirect(url_for('main.login'))
-        else:
-            flash('未找到该邮箱对应的账号', 'error')
-            
-    return render_template('reset_request.html', form=form)
+        flash('Email address not found', 'error')
+    return render_template('reset_password_request.html', form=form)
 
 @main.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     form = ResetPasswordForm()
     email = verify_reset_token(token)
     if not email:
-        flash('重置链接无效或已过期', 'error')
+        flash('Invalid or expired reset link', 'error')
         return redirect(url_for('main.reset_password_request'))
         
     user = User.query.filter_by(email=email).first()
     if not user:
-        flash('用户不存在', 'error')
+        flash('User does not exist', 'error')
         return redirect(url_for('main.reset_password_request'))
         
     if form.validate_on_submit():
@@ -266,7 +264,7 @@ def reset_password(token):
             
         user.set_password(form.password.data)
         db.session.commit()
-        flash('密码已重置，请使用新密码登录', 'success')
+        flash('Password has been reset, please login with your new password', 'success')
         return redirect(url_for('main.login'))
         
     return render_template('reset_password.html', form=form)
@@ -276,7 +274,7 @@ def reset_password(token):
 def setup_2fa():
     # 检查是否已启用双因素认证
     if current_user.is_2fa_enabled:  # 改用 is_2fa_enabled 而不是 otp_secret
-        flash('您已经启用了双重认证', 'warning')
+        flash('Two-factor authentication is already enabled', 'warning')
         return redirect(url_for('main.profile'))
     
     form = Enable2FAForm()
@@ -287,10 +285,10 @@ def setup_2fa():
             current_user.otp_secret = secret
             current_user.is_2fa_enabled = True  # 设置启用标志
             db.session.commit()
-            flash('双因素认证已成功启用', 'success')
+            flash('Two-factor authentication enabled successfully', 'success')
             return redirect(url_for('main.profile'))
         else:
-            flash('验证码无效', 'error')
+            flash('Invalid verification code', 'error')
     
     if request.method == 'GET':
         # 生成密钥
@@ -300,7 +298,7 @@ def setup_2fa():
         totp = pyotp.TOTP(secret)
         provisioning_uri = totp.provisioning_uri(
             current_user.email,
-            issuer_name="Lovejoy古董评估"
+            issuer_name="Lovejoy Antiques"
         )
         
         # 生成二维码
@@ -340,12 +338,12 @@ def verify_2fa():
             session.pop('2fa_user_id', None)
             return redirect(url_for('main.home'))
         else:
-            flash('验证码无效', 'error')
+            flash('Invalid verification code', 'error')
             
     return render_template('verify_2fa.html', form=form)
 
 @main.route('/profile')
 @login_required
 def profile():
-    """用户个人资料页面"""
+    """User profile page"""
     return render_template('profile.html') 

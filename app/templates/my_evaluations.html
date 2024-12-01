@@ -40,7 +40,7 @@ content %}
         </a>
         {% if evaluation.status == 'pending' %}
         <button
-          onclick="cancelEvaluation({{ evaluation.id }})"
+          onclick="cancelEvaluation('{{ evaluation.id }}')"
           class="btn btn-danger"
         >
           Cancel Evaluation

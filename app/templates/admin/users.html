@@ -30,7 +30,10 @@ admin_content %}
             </span>
           </td>
           <td>
-            <button class="btn btn-danger" onclick="deleteUser({{ user.id }})">
+            <button
+              class="btn btn-danger"
+              onclick="deleteUser('{{ user.id }}')"
+            >
               Delete
             </button>
           </td>

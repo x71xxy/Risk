@@ -70,15 +70,15 @@ class LoginForm(FlaskForm):
 
 class ResetPasswordRequestForm(FlaskForm):
     email = EmailField('Email', validators=[
-        DataRequired(),
-        Email()
+        DataRequired(message='Email is required'),
+        Email(message='Invalid email address')
     ])
     submit = SubmitField('Send Reset Link')
 
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('New Password', validators=[
         DataRequired(message='Please enter a new password'),
-        Length(min=6, message='Password must be at least 6 characters long')
+        Length(min=8, message='Password must be at least 8 characters long')
     ])
     confirm_password = PasswordField('Confirm Password', validators=[
         DataRequired(message='Please confirm your password'),

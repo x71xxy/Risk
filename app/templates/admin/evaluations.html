@@ -33,7 +33,7 @@ admin_content %}
           <td>
             <select
               class="status-select compact"
-              onchange="updateStatus({{ evaluation.id }}, this.value)"
+              onchange="updateStatus('{{ evaluation.id }}', this.value)"
             >
               {% for status, label in evaluation.STATUS_CHOICES.items() %}
               <option value="{{ status }}" {% if status==evaluation.status %}selected{% endif %}>
