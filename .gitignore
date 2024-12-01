@@ -23,3 +23,11 @@ app/static/uploads/*
 .vscode/
 .idea/
 *.swp 
+# 自动处理换行符
+* text=auto
+
+# 指定特定文件类型的换行符
+*.py text
+*.html text
+*.md text
+*.txt text

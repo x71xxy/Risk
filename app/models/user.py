@@ -51,14 +51,16 @@ class TempUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    phone = db.Column(db.String(20), nullable=True)
     password_hash = db.Column(db.String(512))
     verify_token = db.Column(db.String(512))
     expires_at = db.Column(db.DateTime, default=datetime.utcnow)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    def __init__(self, username, email):
+    def __init__(self, username, email, phone=None):
         self.username = username
         self.email = email
+        self.phone = phone
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

@@ -15,7 +15,7 @@ from wtforms.validators import (
     Optional
 )
 from wtforms.validators import ValidationError
-from app.models.user import User
+from ..models.user import User
 
 class RegistrationForm(FlaskForm):
     username = StringField('用户名', validators=[
@@ -77,10 +77,10 @@ class ResetPasswordRequestForm(FlaskForm):
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('新密码', validators=[
         DataRequired(),
-        Length(min=8)
+        Length(min=8, message='密码长度至少为8个字符')
     ])
     confirm_password = PasswordField('确认新密码', validators=[
         DataRequired(),
-        EqualTo('password')
+        EqualTo('password', message='两次输入的密码不一致')
     ])
     submit = SubmitField('重置密码') 

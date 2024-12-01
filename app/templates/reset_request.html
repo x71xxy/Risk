@@ -7,25 +7,30 @@ content %}
       <p class="subtitle">请输入您的账号邮箱，我们将向您发送重置链接</p>
     </div>
 
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %} {% endif %} {% endwith %}
+
     <form method="POST" class="auth-form">
+      {{ form.hidden_tag() }}
+
       <div class="form-group">
-        <label for="email">邮箱地址</label>
+        {{ form.email.label }}
         <div class="input-wrapper">
           <i class="icon">📧</i>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            required
-            placeholder="请输入您的邮箱地址"
-          />
+          {{ form.email(class="form-control", placeholder="请输入您的邮箱地址")
+          }}
         </div>
+        {% if form.email.errors %} {% for error in form.email.errors %}
+        <span class="error-message">{{ error }}</span>
+        {% endfor %} {% endif %}
       </div>
 
-      <button type="submit" class="btn btn-primary">发送重置链接</button>
+      {{ form.submit(class="btn btn-primary") }}
 
       <div class="auth-links">
-        <a href="{{ url_for('main.login') }}" class="link"> 返回登录 </a>
+        <a href="{{ url_for('main.login') }}" class="link">返回登录</a>
       </div>
     </form>
   </div>
@@ -51,6 +56,26 @@ content %}
     animation: slideUp 0.5s ease-out;
   }
 
-  /* 复用auth-container的基础样式 */
+  .error-message {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
+  .alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+  }
+
+  .alert-error {
+    background: #fed7d7;
+    color: #c53030;
+  }
+
+  .alert-success {
+    background: #c6f6d5;
+    color: #2f855a;
+  }
 </style>
 {% endblock %}

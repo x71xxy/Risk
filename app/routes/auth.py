@@ -82,7 +82,8 @@ def register():
             # 创建临时用户
             temp_user = TempUser(
                 username=form.username.data,
-                email=form.email.data
+                email=form.email.data,
+                phone=form.phone.data if form.phone.data else None
             )
             temp_user.password_hash = generate_password_hash(form.password.data)
             
@@ -142,8 +143,8 @@ def verify_email(token):
         user = User(
             username=temp_user.username,
             email=temp_user.email,
-            phone='',
-            password_hash=temp_user.password_hash,  # 直接使用临时用户的密码哈希
+            phone=temp_user.phone if hasattr(temp_user, 'phone') else None,
+            password_hash=temp_user.password_hash,
             is_verified=True
         )
         
@@ -197,7 +198,8 @@ def logout():
 
 @main.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
-    if request.method == 'POST':
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
         email = request.form.get('email')
         user = User.query.filter_by(email=email).first()
         
@@ -208,10 +210,11 @@ def reset_password_request():
         else:
             flash('未找到该邮箱对应的账号', 'error')
             
-    return render_template('reset_request.html')
+    return render_template('reset_request.html', form=form)
 
 @main.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
+    form = ResetPasswordForm()
     email = verify_reset_token(token)
     if not email:
         flash('重置链接无效或已过期', 'error')
@@ -222,22 +225,15 @@ def reset_password(token):
         flash('用户不存在', 'error')
         return redirect(url_for('main.reset_password_request'))
         
-    if request.method == 'POST':
-        password = request.form.get('password')
-        confirm_password = request.form.get('confirm_password')
-        
-        if password != confirm_password:
-            flash('两次输入的密码不一致', 'error')
-            return render_template('reset_password.html')
-            
-        is_valid, error_message = validate_password(password)
+    if form.validate_on_submit():
+        is_valid, error_message = validate_password(form.password.data)
         if not is_valid:
             flash(error_message, 'error')
-            return render_template('reset_password.html')
+            return render_template('reset_password.html', form=form)
             
-        user.set_password(password)
+        user.set_password(form.password.data)
         db.session.commit()
         flash('密码已重置，请使用新密码登录', 'success')
         return redirect(url_for('main.login'))
         
-    return render_template('reset_password.html') 
+    return render_template('reset_password.html', form=form) 
