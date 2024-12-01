@@ -16,22 +16,35 @@
       {{ form.hidden_tag() }}
 
       <div class="form-group">
-        {{ form.username.label }} {{ form.username(class="form-control") }}
+        {{ form.username.label }} {{ form.username(class="form-control",
+        placeholder="请输入用户名") }} {% if form.username.errors %} {% for
+        error in form.username.errors %}
+        <span class="error-message">{{ error }}</span>
+        {% endfor %} {% endif %}
       </div>
 
       <div class="form-group">
-        {{ form.password.label }} {{ form.password(class="form-control") }}
+        {{ form.password.label }} {{ form.password(class="form-control",
+        placeholder="请输入密码") }} {% if form.password.errors %} {% for error
+        in form.password.errors %}
+        <span class="error-message">{{ error }}</span>
+        {% endfor %} {% endif %}
       </div>
 
-      <button type="submit" class="btn btn-primary">登录</button>
+      {% if form.remember_me %}
+      <div class="form-group remember-me">
+        {{ form.remember_me(class="form-check-input") }} {{
+        form.remember_me.label(class="form-check-label") }}
+      </div>
+      {% endif %} {{ form.submit(class="btn btn-primary") }}
 
       <div class="auth-links">
-        <a href="{{ url_for('main.register') }}" class="link">
-          还没有账号？立即注册
-        </a>
-        <a href="{{ url_for('main.reset_password_request') }}" class="link">
-          忘记密码？
-        </a>
+        <a href="{{ url_for('main.register') }}" class="link"
+          >还没有账号？立即注册</a
+        >
+        <a href="{{ url_for('main.reset_password_request') }}" class="link"
+          >忘记密码？</a
+        >
       </div>
     </form>
   </div>
@@ -77,6 +90,13 @@
     border: 2px solid #e2e8f0;
     border-radius: 8px;
     font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus {
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+    outline: none;
   }
 
   .btn-primary {
@@ -115,6 +135,22 @@
   .alert-success {
     background: #c6f6d5;
     color: #2f855a;
+  }
+
+  .remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .form-check-input {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .form-check-label {
+    color: #4a5568;
+    font-size: 0.9rem;
   }
 </style>
 {% endblock %}

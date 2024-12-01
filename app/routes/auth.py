@@ -1,5 +1,6 @@
 from flask import render_template, redirect, url_for, flash, request, session
 from flask_login import login_user, logout_user, login_required, current_user
+from datetime import datetime, timedelta
 from app.models.user import User, TempUser
 from app import db
 from app.utils.password_validation import validate_password
@@ -10,7 +11,6 @@ from app.utils.email import (
     send_verification_email,
     generate_token
 )
-from app import mail
 from app.forms import (
     RegistrationForm,
     LoginForm,
@@ -19,13 +19,7 @@ from app.forms import (
     Enable2FAForm,
     Verify2FAForm
 )
-from . import main
-from datetime import datetime, timedelta
-from flask import current_app
-import pyotp
-import qrcode
-import io
-import base64
+from . import main  # 从 __init__.py 导入 Blueprint
 
 @main.route('/register', methods=['GET', 'POST'])
 def register():
@@ -38,7 +32,7 @@ def register():
         print("POST请求数据:", request.form)
         
     if form.validate_on_submit():
-        print("表单验证成功")
+        print("表单验证功")
         try:
             # 检查用户名是否已存在于正式用户表
             existing_user = User.query.filter_by(username=form.username.data).first()
@@ -176,28 +170,46 @@ def verify_email(token):
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.home'))
-        
+    
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         
+        # 检查账户是否被锁定
+        if user and user.locked_until and user.locked_until > datetime.utcnow():
+            remaining_time = (user.locked_until - datetime.utcnow()).seconds // 60
+            flash(f'账户已被锁定，请 {remaining_time} 分钟后重试', 'error')
+            return render_template('login.html', form=form)
+            
+        # 检查密码
         if user and user.check_password(form.password.data):
-            if not user.is_verified:
-                flash('请先验证您的邮箱', 'error')
-                return render_template('login.html', form=form)
-                
-            if user.is_2fa_enabled:
-                session['2fa_user_id'] = user.id
-                return redirect(url_for('main.verify_2fa'))
-                
-            login_user(user)
+            # 登录成功，重置计数器
+            user.login_attempts = 0
+            user.locked_until = None
+            db.session.commit()
+            
+            login_user(user, remember=form.remember_me.data if hasattr(form, 'remember_me') else False)
             next_page = request.args.get('next')
             if next_page:
                 return redirect(next_page)
-            return redirect(url_for('main.profile'))
+            return redirect(url_for('main.home'))
+        else:
+            if user:
+                # 更新失败次数
+                user.login_attempts += 1
+                user.last_login_attempt = datetime.utcnow()
+                
+                # 如果失败次数达到限制
+                if user.login_attempts >= 5:
+                    user.locked_until = datetime.utcnow() + timedelta(minutes=30)
+                    flash('登录失败次数过多，账户已被锁定30分钟', 'error')
+                else:
+                    remaining_attempts = 5 - user.login_attempts
+                    flash(f'密码错误，还剩 {remaining_attempts} 次尝试机会', 'error')
+                db.session.commit()
+            else:
+                flash('用户名或密码错误', 'error')
             
-        flash('用户名或密码错误', 'error')
-        
     return render_template('login.html', form=form)
 
 @main.route('/logout')

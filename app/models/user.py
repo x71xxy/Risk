@@ -21,9 +21,14 @@ class User(UserMixin, db.Model):
     is_verified = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    # 添加 2FA 相关字段
-    otp_secret = db.Column(db.String(32))  # OTP 密钥
-    is_2fa_enabled = db.Column(db.Boolean, default=False)  # 是否启用 2FA
+    # 2FA 相关字段
+    otp_secret = db.Column(db.String(32))
+    is_2fa_enabled = db.Column(db.Boolean, default=False)
+    
+    # 登录尝试相关字段
+    login_attempts = db.Column(db.Integer, default=0)
+    locked_until = db.Column(db.DateTime, nullable=True)
+    last_login_attempt = db.Column(db.DateTime, nullable=True)
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -70,6 +75,17 @@ class User(UserMixin, db.Model):
         """生成新的 OTP 密钥"""
         self.otp_secret = pyotp.random_base32()
         return self.otp_secret
+    
+    @property
+    def is_locked(self):
+        if self.locked_until and self.locked_until > datetime.utcnow():
+            return True
+        # 如果锁定时间已过，自动解锁
+        if self.locked_until:
+            self.locked_until = None
+            self.login_attempts = 0
+            db.session.commit()
+        return False
 
 class TempUser(db.Model):
     __tablename__ = 'temp_users'
