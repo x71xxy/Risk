@@ -22,7 +22,7 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # 2FA 相关字段
-    otp_secret = db.Column(db.String(32))
+    otp_secret = db.Column(db.String(32), unique=True, nullable=True)
     is_2fa_enabled = db.Column(db.Boolean, default=False)
     
     # 登录尝试相关字段
@@ -67,11 +67,11 @@ class User(UserMixin, db.Model):
         return None
     
     def verify_totp(self, token):
-        """验证 TOTP token"""
-        if self.otp_secret:
-            totp = pyotp.TOTP(self.otp_secret)
-            return totp.verify(token)
-        return False
+        """验证 TOTP 令牌"""
+        if not self.otp_secret:
+            return False
+        totp = pyotp.TOTP(self.otp_secret)
+        return totp.verify(token)
     
     def generate_otp_secret(self):
         """生成新的 OTP 密钥"""

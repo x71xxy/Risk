@@ -2,21 +2,13 @@
 content %}
 <div class="auth-container">
   <div class="auth-box">
-    <div class="auth-header">
-      <h1>重置密码</h1>
-      <p class="subtitle">请输入您的账号邮箱，我们将向您发送重置链接</p>
-    </div>
-
-    {% with messages = get_flashed_messages(with_categories=true) %} {% if
-    messages %} {% for category, message in messages %}
-    <div class="alert alert-{{ category }}">{{ message }}</div>
-    {% endfor %} {% endif %} {% endwith %}
+    <h1>重置密码</h1>
+    <p class="description">请输入您的账号邮箱，我们将向您发送重置链接</p>
 
     <form method="POST" class="auth-form">
       {{ form.hidden_tag() }}
 
       <div class="form-group">
-        {{ form.email.label }}
         <div class="input-wrapper">
           <i class="icon">📧</i>
           {{ form.email(class="form-control", placeholder="请输入您的邮箱地址")
@@ -27,10 +19,10 @@ content %}
         {% endfor %} {% endif %}
       </div>
 
-      {{ form.submit(class="btn btn-primary") }}
+      <button type="submit" class="submit-btn">发送重置链接</button>
 
       <div class="auth-links">
-        <a href="{{ url_for('main.login') }}" class="link">返回登录</a>
+        <a href="{{ url_for('main.login') }}" class="return-link">返回登录</a>
       </div>
     </form>
   </div>
@@ -53,7 +45,73 @@ content %}
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     width: 100%;
     max-width: 420px;
-    animation: slideUp 0.5s ease-out;
+  }
+
+  h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+
+  .description {
+    text-align: center;
+    color: #666;
+    margin-bottom: 2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .icon {
+    position: absolute;
+    left: 12px;
+    color: #666;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .submit-btn:hover {
+    background-color: #357abd;
+  }
+
+  .auth-links {
+    text-align: center;
+    margin-top: 1.5rem;
+  }
+
+  .return-link {
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  .return-link:hover {
+    color: #4a90e2;
   }
 
   .error-message {

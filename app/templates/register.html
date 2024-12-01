@@ -4,16 +4,6 @@
 {% endblock %} {% block content %}
 <div class="auth-container">
   <div class="auth-box">
-    {% with messages = get_flashed_messages(with_categories=true) %} {% if
-    messages %} {% for category, message in messages %}
-    <div class="alert alert-{{ category }}">{{ message }}</div>
-    {% endfor %} {% endif %} {% endwith %} {% if form.errors %} {% for field,
-    errors in form.errors.items() %} {% for error in errors %}
-    <div class="alert alert-error">
-      {{ form[field].label.text }}: {{ error }}
-    </div>
-    {% endfor %} {% endfor %} {% endif %}
-
     <div class="auth-header">
       <h1>创建账号</h1>
       <p class="subtitle">加入Lovejoy古董评估平台</p>

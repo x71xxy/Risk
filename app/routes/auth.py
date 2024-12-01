@@ -20,6 +20,11 @@ from app.forms import (
     Verify2FAForm
 )
 from . import main  # 从 __init__.py 导入 Blueprint
+import qrcode
+import io
+import pyotp
+from PIL import Image
+import base64
 
 @main.route('/register', methods=['GET', 'POST'])
 def register():
@@ -32,7 +37,7 @@ def register():
         print("POST请求数据:", request.form)
         
     if form.validate_on_submit():
-        print("表单验证功")
+        print("表单证功")
         try:
             # 检查用户名是否已存在于正式用户表
             existing_user = User.query.filter_by(username=form.username.data).first()
@@ -188,6 +193,12 @@ def login():
             user.locked_until = None
             db.session.commit()
             
+            # 如果用户启用了双因素认证
+            if user.is_2fa_enabled:
+                session['2fa_user_id'] = user.id  # 存储用户ID用于2FA验证
+                return redirect(url_for('main.verify_2fa'))
+            
+            # 如果没有启用2FA，直接登录
             login_user(user, remember=form.remember_me.data if hasattr(form, 'remember_me') else False)
             next_page = request.args.get('next')
             if next_page:
@@ -263,43 +274,56 @@ def reset_password(token):
 @main.route('/setup_2fa', methods=['GET', 'POST'])
 @login_required
 def setup_2fa():
-    if current_user.is_2fa_enabled:
-        flash('双因素认证已经启用', 'info')
+    # 检查是否已启用双因素认证
+    if current_user.is_2fa_enabled:  # 改用 is_2fa_enabled 而不是 otp_secret
+        flash('您已经启用了双重认证', 'warning')
         return redirect(url_for('main.profile'))
-        
+    
     form = Enable2FAForm()
     
-    if request.method == 'GET':
-        # 生成新的 OTP 密钥
-        secret = current_user.generate_otp_secret()
-        db.session.commit()
-        
-        # 生成 QR 码
-        qr = qrcode.QRCode(version=1, box_size=10, border=5)
-        qr.add_data(current_user.get_totp_uri())
-        qr.make(fit=True)
-        
-        img = qr.make_image(fill_color="black", back_color="white")
-        buffered = io.BytesIO()
-        img.save(buffered, format="PNG")
-        qr_code = base64.b64encode(buffered.getvalue()).decode()
-        
-        return render_template(
-            'setup_2fa.html',
-            form=form,
-            qr_code=f"data:image/png;base64,{qr_code}",
-            secret=current_user.otp_secret
-        )
-        
     if form.validate_on_submit():
-        if current_user.verify_totp(form.token.data):
-            current_user.is_2fa_enabled = True
+        secret = session.get('temp_otp_secret')
+        if secret and pyotp.TOTP(secret).verify(form.token.data):
+            current_user.otp_secret = secret
+            current_user.is_2fa_enabled = True  # 设置启用标志
             db.session.commit()
             flash('双因素认证已成功启用', 'success')
             return redirect(url_for('main.profile'))
         else:
             flash('验证码无效', 'error')
-            
+    
+    if request.method == 'GET':
+        # 生成密钥
+        secret = pyotp.random_base32()
+        
+        # 创建 OTP URI
+        totp = pyotp.TOTP(secret)
+        provisioning_uri = totp.provisioning_uri(
+            current_user.email,
+            issuer_name="Lovejoy古董评估"
+        )
+        
+        # 生成二维码
+        qr = qrcode.QRCode(version=1, box_size=10, border=5)
+        qr.add_data(provisioning_uri)
+        qr.make(fit=True)
+        
+        # 创建图片
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        # 将图片转换为字节流
+        img_buffer = io.BytesIO()
+        img.save(img_buffer, format='PNG')
+        img_str = "data:image/png;base64," + base64.b64encode(img_buffer.getvalue()).decode()
+        
+        # 保存密钥到会话中
+        session['temp_otp_secret'] = secret
+        
+        return render_template('setup_2fa.html', 
+                             qr_code=img_str, 
+                             secret=secret,
+                             form=form)
+    
     return render_template('setup_2fa.html', form=form)
 
 @main.route('/verify_2fa', methods=['GET', 'POST'])

@@ -77,11 +77,11 @@ class ResetPasswordRequestForm(FlaskForm):
 
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('新密码', validators=[
-        DataRequired(),
-        Length(min=8, message='密码长度至少为8个字符')
+        DataRequired(message='请输入新密码'),
+        Length(min=6, message='密码长度至少为6个字符')
     ])
-    confirm_password = PasswordField('确认新密码', validators=[
-        DataRequired(),
+    confirm_password = PasswordField('确认密码', validators=[
+        DataRequired(message='请再次输入密码'),
         EqualTo('password', message='两次输入的密码不一致')
     ])
     submit = SubmitField('重置密码')
