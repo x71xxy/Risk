@@ -28,9 +28,9 @@ After=network.target
 [Service]
 User=ec2-user
 Group=ec2-user
-WorkingDirectory=/home/ec2-user/lovejoy
-Environment="PATH=/home/ec2-user/lovejoy/venv/bin"
-ExecStart=/home/ec2-user/lovejoy/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:8000 wsgi:app
+WorkingDirectory=/home/ec2-user/Risk
+Environment="PATH=/home/ec2-user/Risk/venv/bin"
+ExecStart=/home/ec2-user/Risk/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:8000 wsgi:app
 
 [Install]
 WantedBy=multi-user.target
@@ -38,4 +38,4 @@ EOF
 
 # 启动服务
 sudo systemctl start lovejoy
-sudo systemctl enable lovejoy 
+sudo systemctl enable lovejoy
